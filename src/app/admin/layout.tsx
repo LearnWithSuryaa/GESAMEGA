@@ -70,7 +70,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Logo Section */}
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary flex items-center justify-center text-white font-bold text-lg shadow-lg">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
               S
             </div>
             <div>
@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                       href={item.path}
                       className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 group ${
                         isActive
-                          ? "bg-gradient-to-r from-surface-alt to-orange-50 text-text-dark font-semibold shadow-sm"
+                          ? "bg-gradient-to-r from-orange-50 to-orange-50 text-orange-700 font-semibold shadow-sm"
                           : "text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900"
                       }`}
                     >
@@ -105,14 +105,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         <Icon
                           className={`w-5 h-5 transition-transform ${
                             isActive
-                              ? "text-primary"
+                              ? "text-orange-600"
                               : "text-gray-400 group-hover:text-gray-600"
                           }`}
                         />
                         <span>{item.name}</span>
                       </div>
                       {item.badge && (
-                        <span className="inline-block min-w-[24px] h-6 px-2 bg-primary text-white text-xs font-bold rounded-full">
+                        <span className="inline-block min-w-[24px] h-6 px-2 bg-orange-500 text-white text-xs font-bold rounded-full">
                           {item.badge}
                         </span>
                       )}
@@ -157,7 +157,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               </h2>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-info to-primary flex items-center justify-center text-white text-sm font-bold cursor-pointer hover:shadow-lg transition-shadow" title="Profile">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold cursor-pointer hover:shadow-lg transition-shadow" title="Profile">
                 A
               </div>
             </div>

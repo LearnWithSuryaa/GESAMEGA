@@ -116,7 +116,7 @@ const CATEGORY_CONFIG: Record<
 const AVATAR_COLORS = [
   { bg: "bg-blue-50", text: "text-blue-700" },
   { bg: "bg-emerald-50", text: "text-emerald-700" },
-  { bg: "bg-surface-alt", text: "text-text-dark" },
+  { bg: "bg-orange-50", text: "text-orange-700" },
   { bg: "bg-purple-50", text: "text-purple-700" },
   { bg: "bg-amber-50", text: "text-amber-700" },
 ];
@@ -165,8 +165,8 @@ export default async function AdminDashboard() {
             label: "Kuis Diselesaikan",
             value: stats.totalQuizzes,
             icon: CheckCircle2,
-            iconClass: "text-primary",
-            iconBg: "bg-surface-alt",
+            iconClass: "text-orange-600",
+            iconBg: "bg-orange-50",
             foot: "+12% minggu ini",
             footClass: "text-emerald-600",
           },
@@ -215,8 +215,8 @@ export default async function AdminDashboard() {
             value: stats.quizzesThisWeek,
             trend: "+12%",
             icon: BarChart3,
-            iconClass: "text-primary",
-            iconBg: "bg-surface-alt",
+            iconClass: "text-orange-600",
+            iconBg: "bg-orange-50",
           },
           {
             label: "Survei minggu ini",
@@ -260,8 +260,8 @@ export default async function AdminDashboard() {
         {/* Category Distribution */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-black/[0.07] p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-surface-alt rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-4 h-4 text-primary" />
+            <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
+              <BarChart3 className="w-4 h-4 text-orange-600" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-gray-900">
@@ -408,8 +408,8 @@ export default async function AdminDashboard() {
         {/* Recent Quizzes */}
         <div className="bg-white rounded-2xl border border-black/[0.07] shadow-sm overflow-hidden">
           <div className="flex items-center gap-3 px-5 pt-5 pb-4">
-            <div className="w-8 h-8 bg-surface-alt rounded-lg flex items-center justify-center">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
+            <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
+              <CheckCircle2 className="w-4 h-4 text-orange-600" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-gray-900">
@@ -466,7 +466,7 @@ export default async function AdminDashboard() {
           <div className="border-t border-black/[0.06] px-5 py-3">
             <Link
               href="/admin/data-kuis"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-text-dark"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700"
             >
               Lihat semua
               <ArrowRight className="w-3 h-3" />
