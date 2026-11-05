@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { supabase } from "@/lib/supabase";
+import { MAP_CONFIG } from "@/lib/mapConfig";
 
 // ── Lucide SVG paths (inline, no CDN) ─────────────────────────────────────
 // BadgeCheck — komitmen
@@ -69,9 +69,9 @@ const iconPrimary = makeLucideMarker(
 );
 const iconInfo = makeLucideMarker(
   ICON_CLIPBOARD,
-  "#FFB74D", // accent (Orange)
+  "#1E88E5", // info (Blue GESAMEGA)
   "#FFFFFF",
-  "#FFB74D60",
+  "#1E88E560",
 );
 const iconNeutral = makeLucideMarker(
   ICON_MAP_PIN,
@@ -91,9 +91,9 @@ const iconPrimaryPending = makeLucideMarker(
 );
 const iconInfoPending = makeLucideMarker(
   ICON_CLIPBOARD,
-  "#FFB74D",
+  "#1E88E5",
   "#FFFFFF",
-  "#FFB74D30",
+  "#1E88E530",
   true,
 );
 const iconNeutralPending = makeLucideMarker(
@@ -148,14 +148,11 @@ export default function PetaKomponen({ schoolId, schools }: Props) {
         center={[-7.4478, 112.7183]} 
         zoom={11} 
         scrollWheelZoom={true} 
-        className="w-full h-[600px] z-10"
+        className="w-full h-[600px] z-10 peta-styled-map"
         style={{ background: "#F5F7FA" }}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          subdomains="abcd"
-          maxZoom={19}
+          {...MAP_CONFIG.getTileLayerProps()}
         />
         <MapController schools={schools} targetId={schoolId} />
         
@@ -165,16 +162,37 @@ export default function PetaKomponen({ schoolId, schools }: Props) {
             position={[school.latitude, school.longitude]} 
             icon={getIcon(school.status, school.status_validasi)}
           >
-            <Popup>
-              <div className="text-center font-sans">
-                <h3 className="font-bold text-gray-900 mb-1">{school.nama_sekolah}</h3>
-                <span className={`inline-block px-2 py-1 text-[10px] rounded-md uppercase tracking-wider font-bold ${
-                  school.status === 'komitmen' ? 'bg-emerald-100 text-emerald-700' : 
-                  school.status === 'survei' ? 'bg-orange-100 text-orange-700' : 
-                  'bg-slate-100 text-slate-700'
-                }`}>
-                  {school.status === 'komitmen' ? 'Sudah Komitmen' : school.status === 'survei' ? 'Sudah Survei' : 'Belum Ikut'}
-                </span>
+            <Popup className="custom-peta-popup">
+              <div className="p-1 font-sans min-w-[190px]">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-bold rounded-full border ${
+                    school.status === 'komitmen' 
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                      : school.status === 'survei' 
+                      ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                      : 'bg-slate-100 text-slate-600 border-slate-200'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${
+                      school.status === 'komitmen' 
+                        ? 'bg-emerald-600' 
+                        : school.status === 'survei' 
+                        ? 'bg-blue-600' 
+                        : 'bg-slate-400'
+                    }`} />
+                    {school.status === 'komitmen' ? 'Sudah Komitmen' : school.status === 'survei' ? 'Sudah Survei' : 'Belum Ikut'}
+                  </span>
+                  {school.status_validasi === 'pending' && (
+                    <span className="text-[10px] text-amber-700 font-medium bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                      Pending
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm leading-snug mb-1">
+                  {school.nama_sekolah}
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  Kabupaten Sidoarjo, Jawa Timur
+                </p>
               </div>
             </Popup>
           </Marker>

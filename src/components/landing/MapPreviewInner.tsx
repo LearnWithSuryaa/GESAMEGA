@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { supabase } from "@/lib/supabase";
+import { MAP_CONFIG } from "@/lib/mapConfig";
 
 // ── Lucide SVG paths ────────────────────────────────────────────────────────
 const ICON_CHECK =
@@ -65,9 +66,9 @@ const iconPrimary = makeLucideMarker(
 );
 const iconInfo = makeLucideMarker(
   ICON_CLIPBOARD,
-  "#FFB74D", // accent (Orange)
+  "#1E88E5", // info (Blue GESAMEGA)
   "#FFFFFF",
-  "#FFB74D60",
+  "#1E88E560",
 );
 const iconNeutral = makeLucideMarker(
   ICON_MAP_PIN,
@@ -87,9 +88,9 @@ const iconPrimaryPending = makeLucideMarker(
 );
 const iconInfoPending = makeLucideMarker(
   ICON_CLIPBOARD,
-  "#FFB74D",
+  "#1E88E5",
   "#FFFFFF",
-  "#FFB74D30",
+  "#1E88E530",
   true,
 );
 const iconNeutralPending = makeLucideMarker(
@@ -152,14 +153,11 @@ export default function MapPreviewInner() {
       zoom={11}
       zoomControl={false}
       attributionControl={false}
-      className="w-full h-105"
+      className="w-full h-105 peta-styled-map"
       style={{ cursor: "default", background: "#F5F7FA" }}
     >
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        subdomains="abcd"
-        maxZoom={19}
+        {...MAP_CONFIG.getTileLayerProps()}
       />
 
       <DisableInteractions />

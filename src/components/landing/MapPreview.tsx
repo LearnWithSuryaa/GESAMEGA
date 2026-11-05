@@ -8,9 +8,6 @@ import {
   ClipboardList,
   MapPin,
   ArrowUpRight,
-  Activity,
-  Globe2,
-  TrendingUp,
 } from "lucide-react";
 
 const MapPreviewInner = dynamic(
@@ -24,7 +21,7 @@ const MapPreviewInner = dynamic(
       >
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" />
-          <span className="text-xs text-white/20 font-mono tracking-widest uppercase">
+          <span className="text-xs text-slate-400 font-mono tracking-widest uppercase">
             Memuat peta…
           </span>
         </div>
@@ -33,24 +30,18 @@ const MapPreviewInner = dynamic(
   },
 );
 
-const stats = [
-  { value: "300+", label: "Sekolah", icon: Globe2, color: "#10b981" },
-  { value: "98%", label: "Aktif", icon: Activity, color: "#f59e0b" },
-  { value: "12", label: "Provinsi", icon: TrendingUp, color: "#6366f1" },
-];
-
 const legend = [
   {
     icon: BadgeCheck,
     label: "Sudah Komitmen",
-    accent: "#10b981",
-    bg: "rgba(16,185,129,0.12)",
+    accent: "#2E7D32",
+    bg: "rgba(46,125,50,0.12)",
   },
   {
     icon: ClipboardList,
     label: "Sudah Survei",
-    accent: "#f59e0b",
-    bg: "rgba(245,158,11,0.12)",
+    accent: "#1E88E5",
+    bg: "rgba(30,136,229,0.12)",
   },
   {
     icon: MapPin,
@@ -60,45 +51,16 @@ const legend = [
   },
 ];
 
-function StatCard({ stat, index }: { stat: (typeof stats)[0]; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: 0.15 * index }}
-      className="relative flex-1 min-w-25 rounded-2xl p-4 overflow-hidden group border border-slate-200 bg-white shadow-sm"
-    >
-      <div
-        className="absolute -top-4 -right-4 w-16 h-16 opacity-30 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none"
-        style={{ background: `radial-gradient(circle, ${stat.color} 0%, transparent 70%)` }}
-      />
-      <stat.icon
-        className="w-4 h-4 mb-3 relative z-10"
-        style={{ color: stat.color }}
-      />
-      <div className="text-2xl font-black text-text-dark relative z-10 tracking-tight">
-        {stat.value}
-      </div>
-      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5 relative z-10">
-        {stat.label}
-      </div>
-    </motion.div>
-  );
-}
-
 export function MapPreview() {
   return (
     <section className="relative py-24 px-4 overflow-hidden bg-white">
-      {/* ── Optimized Background Mesh ── */}
-      {/* Menggunakan radial-gradient alih-alih blur() dan mix-blend-mode untuk performa maksimal tanpa lag */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
             radial-gradient(circle at 20% 0%, rgba(16,185,129,0.04) 0%, transparent 40%),
             radial-gradient(circle at 90% 100%, rgba(59,130,246,0.04) 0%, transparent 40%)
-          `
+          `,
         }}
       />
 
@@ -148,18 +110,6 @@ export function MapPreview() {
               bergabung dalam ekosistem digital pendidikan.
             </p>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, delay: 0.1 }}
-            className="flex gap-3"
-          >
-            {stats.map((stat, i) => (
-              <StatCard key={stat.label} stat={stat} index={i} />
-            ))}
-          </motion.div>
         </div>
 
         {/* Map card */}
@@ -192,11 +142,6 @@ export function MapPreview() {
             </svg>
           </div>
 
-          {/*
-            FIX: Wrapper dengan tinggi eksplisit via style (bukan h-[460px] saja).
-            Leaflet membutuhkan parent dengan computed height yang jelas.
-            Kita inject CSS global untuk memastikan .leaflet-container full-size.
-          */}
           <div className="relative w-full" style={{ height: "460px" }}>
             <style>{`
               .mp-leaflet-wrap,
@@ -212,7 +157,7 @@ export function MapPreview() {
               <MapPreviewInner />
             </div>
 
-            {/* Vignette overlays — z > Leaflet's z-[400] */}
+            {/* Vignette overlays */}
             <div className="absolute inset-0 pointer-events-none z-450">
               <div className="absolute inset-x-0 bottom-0 h-52 bg-linear-to-t from-white/95 via-white/50 to-transparent" />
               <div className="absolute inset-x-0 top-0 h-14 bg-linear-to-b from-white/50 to-transparent" />
@@ -261,18 +206,17 @@ export function MapPreview() {
                 transition={{ duration: 0.45, delay: 0.4 }}
                 className="shrink-0"
               >
-                <Link href="/peta">
-                  <button
-                    className="group flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all duration-200 shadow-[0_0_28px_rgba(46,125,50,0.4),0_4px_14px_rgba(0,0,0,0.1)] hover:shadow-[0_0_44px_rgba(46,125,50,0.55),0_4px_18px_rgba(0,0,0,0.15)] hover:scale-[1.03]"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
-                    }}
-                  >
-                    <MapPin className="w-4 h-4" />
-                    Lihat Peta Lengkap
-                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-150" />
-                  </button>
+                <Link
+                  href="/peta"
+                  className="group flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all duration-200 shadow-[0_0_28px_rgba(46,125,50,0.4),0_4px_14px_rgba(0,0,0,0.1)] hover:shadow-[0_0_44px_rgba(46,125,50,0.55),0_4px_18px_rgba(0,0,0,0.15)] hover:scale-[1.03]"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
+                  }}
+                >
+                  <MapPin className="w-4 h-4" />
+                  Lihat Peta Lengkap
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-150" />
                 </Link>
               </motion.div>
             </div>

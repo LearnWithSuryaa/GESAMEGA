@@ -1,13 +1,11 @@
 "use client";
 
 import nextDynamic from "next/dynamic";
+import type { DriveStep } from "driver.js";
 import {
   MapPin,
   ArrowRight,
-  BadgeCheck,
   ClipboardList,
-  Globe2,
-  Flame,
   Building,
   Users,
   PieChart,
@@ -30,7 +28,7 @@ const PetaMap = nextDynamic(() => import("@/components/PetaMap"), {
   loading: () => (
     <div className="w-full h-full flex items-center justify-center bg-slate-50/50">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
+        <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
         <span className="text-xs text-slate-500 font-mono tracking-widest uppercase">
           Memuat Peta Nusantara…
         </span>
@@ -73,7 +71,7 @@ export function PetaClient({ schools, counts }: PetaClientProps) {
     counts.total - counts.komitmen - counts.survei,
   );
 
-  const tourSteps: any[] = [
+  const tourSteps: DriveStep[] = [
     {
       element: "#tour-header",
       popover: {
@@ -237,7 +235,7 @@ export function PetaClient({ schools, counts }: PetaClientProps) {
           </div>
           {/* Card 3 */}
           <div className="bg-white rounded-2xl p-5 md:p-6 border border-slate-100 shadow-sm flex items-center gap-5">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-orange-50 text-orange-500 shrink-0">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-blue-50 text-blue-600 shrink-0">
               <ClipboardList className="w-7 h-7" />
             </div>
             <div>
@@ -247,7 +245,7 @@ export function PetaClient({ schools, counts }: PetaClientProps) {
               <div className="text-sm font-semibold text-slate-700">
                 Sudah Survei
               </div>
-              <div className="text-xs text-orange-500 font-medium mt-0.5">
+              <div className="text-xs text-blue-600 font-medium mt-0.5">
                 Total yang berpartisipasi mengisi survei
               </div>
             </div>
@@ -314,7 +312,7 @@ export function PetaClient({ schools, counts }: PetaClientProps) {
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <MapPin className="w-4 h-4 text-orange-500 fill-orange-500" />
+                  <MapPin className="w-4 h-4 text-blue-500 fill-blue-500" />
                   <span className="text-xs font-semibold text-slate-700">
                     Sudah Survei
                   </span>
@@ -353,14 +351,14 @@ export function PetaClient({ schools, counts }: PetaClientProps) {
               </div>
 
               {/* Sudah Survei Row */}
-              <div className="flex items-center justify-between p-4 rounded-xl bg-orange-50 border border-orange-100/50">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100">
                 <div className="flex items-center gap-3">
-                  <ClipboardList className="w-5 h-5 text-orange-500" />
+                  <ClipboardList className="w-5 h-5 text-blue-600" />
                   <span className="font-semibold text-slate-800 text-sm">
                     Sudah Survei
                   </span>
                 </div>
-                <span className="text-orange-600 font-bold text-sm">
+                <span className="text-blue-700 font-bold text-sm">
                   {totalSurveiSelesai} Sekolah
                 </span>
               </div>
@@ -492,14 +490,14 @@ export function PetaClient({ schools, counts }: PetaClientProps) {
             id="tour-peta-cta"
             className="mt-6 relative rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm"
           >
-            {/* Orange left bar */}
-            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl bg-linear-to-b from-orange-500 to-orange-400" />
+            {/* Primary accent left bar */}
+            <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-gradient-to-b from-primary to-info" />
             {/* Glow */}
-            <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-28 h-28 rounded-full blur-2xl opacity-10 bg-orange-500" />
+            <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-28 h-28 rounded-full blur-2xl opacity-10 bg-primary" />
 
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 pl-8 pr-6 py-6">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 text-orange-600">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 text-primary">
                   Langkah Berikutnya
                 </p>
                 <h3 className="text-lg font-black text-slate-900 mb-1">
@@ -509,24 +507,20 @@ export function PetaClient({ schools, counts }: PetaClientProps) {
                   Langkah selanjutnya adalah mengesahkan komitmen digital.
                 </p>
               </div>
-              <Link href="/komitmen" className="shrink-0 w-full md:w-auto">
-                <button
-                  className="group w-full md:w-auto flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-bold text-sm text-white transition-all duration-200 bg-orange-500 hover:bg-orange-600"
-                  style={{
-                    boxShadow: "0 4px 14px 0 rgba(249, 115, 22, 0.25)",
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLButtonElement;
-                    el.style.transform = "scale(1.02)";
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLButtonElement;
-                    el.style.transform = "scale(1)";
-                  }}
-                >
-                  Lanjut ke Komitmen
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-150" />
-                </button>
+              <Link
+                href="/komitmen"
+                className="group shrink-0 w-full md:w-auto flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-bold text-sm text-white transition-all duration-200 bg-gradient-to-r from-primary to-info hover:from-primary hover:to-info/90 shadow-md shadow-primary/20"
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLAnchorElement;
+                  el.style.transform = "scale(1.02)";
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLAnchorElement;
+                  el.style.transform = "scale(1)";
+                }}
+              >
+                Lanjut ke Komitmen
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-150" />
               </Link>
             </div>
           </div>
