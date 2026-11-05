@@ -111,16 +111,18 @@ export function HeroSection() {
           transition={{ duration: 0.7, delay: 0.55 }}
           className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center w-full max-w-[320px] sm:max-w-none mx-auto"
         >
-          <Link href="/visi-misi" className="w-full sm:w-auto">
-            <button className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-linear-to-r from-primary to-primary text-white font-medium text-base transition-all duration-300 shadow-lg shadow-primary/25 hover:from-primary hover:to-primary hover:scale-[1.02]">
-              Lihat Visi & Misi
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
+          <Link
+            href="/visi-misi"
+            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-info hover:from-primary hover:to-info/90 text-white font-semibold text-base transition-all duration-300 shadow-lg shadow-primary/25 hover:scale-[1.02]"
+          >
+            Lihat Visi & Misi
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <Link href="/peta" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-slate-200 text-text-dark font-medium text-base hover:bg-surface hover:border-slate-300 transition-all duration-300 hover:scale-[1.02] shadow-sm bg-white backdrop-blur-sm">
-              Lihat Peta
-            </button>
+          <Link
+            href="/peta"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-slate-200 text-text-dark font-medium text-base hover:bg-surface hover:border-slate-300 transition-all duration-300 hover:scale-[1.02] shadow-sm bg-white backdrop-blur-sm"
+          >
+            Lihat Peta
           </Link>
         </motion.div>
       </motion.div>

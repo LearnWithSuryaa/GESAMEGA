@@ -4,8 +4,6 @@ import { ProblemSection } from "@/components/landing/ProblemSection";
 import { SolutionSection } from "@/components/landing/SolutionSection";
 import { ParticipationFlow } from "@/components/landing/ParticipationFlow";
 import { MapPreview } from "@/components/landing/MapPreview";
-import { LiveStatsSection } from "@/components/landing/LiveStatsSection";
-import { CaseStudySection } from "@/components/landing/CaseStudySection";
 import { ArticleSection } from "@/components/landing/ArticleSection";
 
 // Fallback numbers to provide immediate context & social proof
@@ -39,7 +37,7 @@ async function getLandingData() {
         .from("articles")
         .select("id, judul, isi, penulis, kategori, thumbnail_url, created_at")
         .order("created_at", { ascending: false })
-        .limit(3),
+        .limit(4),
     ]);
 
     return {

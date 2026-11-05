@@ -97,7 +97,7 @@ export function ProblemSection() {
           <h2 className="text-4xl md:text-6xl font-black text-text-dark leading-[0.95] tracking-tight">
             Realita Digital
             <br />
-            <span className="bg-linear-to-r from-primary to-primary bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary to-info bg-clip-text text-transparent">
               di Dunia Pendidikan
             </span>
           </h2>

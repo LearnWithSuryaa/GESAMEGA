@@ -2,20 +2,21 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FileText, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export function FinalCTA() {
   return (
     <section className="py-32 px-4 relative overflow-hidden bg-surface-alt">
-      {/* ── Dynamic Glowing Mesh ── */}
-      <div className="absolute inset-0 bg-white/50 mix-blend-overlay" />
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-primary-soft/50 rounded-[100%] blur-[150px] mix-blend-multiply pointer-events-none" />
-      </div>
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 60%, rgba(46,125,50,0.06) 0%, transparent 60%)`,
+        }}
+      />
 
       <div className="max-w-3xl mx-auto text-center relative z-10">
-        {/* Badge */}
+        {/* Badge — ikon relevan: Handshake (kolaborasi/komitmen) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -23,7 +24,7 @@ export function FinalCTA() {
           transition={{ duration: 0.5, ease: "backOut" }}
           className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary-soft bg-white text-primary text-sm font-bold tracking-wide mb-8 shadow-sm"
         >
-          <Sparkles className="w-4 h-4" />
+          <Handshake className="w-4 h-4" />
           Bergabung Sekarang
         </motion.div>
 
@@ -39,7 +40,7 @@ export function FinalCTA() {
           <span
             style={{
               backgroundImage:
-                "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)",
+                "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -81,18 +82,6 @@ export function FinalCTA() {
             </Button>
           </Link>
         </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-10 text-slate-500 text-sm font-medium tracking-wide"
-        >
-          Bergabung bersama{" "}
-          <strong className="text-text-dark">500+ sekolah</strong> yang telah
-          berpartisipasi dari seluruh Kota Sidoarjo
-        </motion.p>
       </div>
     </section>
   );

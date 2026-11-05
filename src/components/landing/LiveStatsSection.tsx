@@ -46,22 +46,27 @@ export function LiveStatsSection({ schools, commitments }: LiveStatsSectionProps
 
   return (
     <section className="relative overflow-hidden py-24 px-4 bg-white">
-      {/* ── Dynamic Glowing Mesh ── */}
-      <div className="absolute inset-0 bg-surface/50 mix-blend-overlay" />
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-surface-alt/50 blur-[130px] rounded-[100%] mix-blend-multiply pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[10%] w-[400px] h-[400px] bg-emerald-100/50 blur-[120px] rounded-full mix-blend-multiply pointer-events-none" />
-      </div>
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(circle at 50% 0%, rgba(46,125,50,0.04) 0%, transparent 50%),
+            radial-gradient(circle at 90% 100%, rgba(30,136,229,0.04) 0%, transparent 40%)
+          `,
+        }}
+      />
       <div className="max-w-5xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary-soft bg-surface-alt text-primary text-xs font-bold uppercase tracking-[0.15em] mb-6 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span
+            className="text-xs uppercase tracking-[0.25em] font-bold mb-4 block"
+            style={{ color: "#1E88E5" }}
+          >
             Data Real-Time
           </span>
           <h2 className="text-4xl md:text-6xl font-black text-text-dark mt-2 mb-4 leading-[1.05] tracking-tight">
@@ -78,8 +83,8 @@ export function LiveStatsSection({ schools, commitments }: LiveStatsSectionProps
             </span>{" "}
             Terkini
           </h2>
-          <p className="text-text-dark font-medium max-w-xl mx-auto text-lg leading-relaxed">
-            Data langsung dari sistem kami, diperbarui secara otomatis setiap kali sekolah baru berpartisipasi.
+          <p className="text-text-dark font-medium max-w-xl text-lg leading-relaxed">
+            Data langsung dari sistem kami, diperbarui setiap kali sekolah baru berpartisipasi.
           </p>
         </motion.div>
 

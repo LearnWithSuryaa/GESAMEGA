@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
+import { ArticleItem } from "@/types/article";
 import {
-  BookOpen,
   Clock,
   ArrowRight,
   Search,
@@ -65,7 +66,7 @@ function getBadge(category: string) {
 export default function ClientArticleList({
   initialArticles,
 }: {
-  initialArticles: any[];
+  initialArticles: ArticleItem[];
 }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -138,10 +139,13 @@ export default function ClientArticleList({
         >
           {/* Background Illustration / Image */}
           <div className="absolute inset-0 z-0">
-            <img
+            <Image
               src="/images/artikel/9.svg"
               alt="Background Header"
-              className="w-full h-full object-cover"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
               style={{ objectPosition: "100% 8%" }}
             />
           </div>
@@ -158,7 +162,7 @@ export default function ClientArticleList({
               <span
                 style={{
                   background:
-                    "linear-gradient(120deg, #64B5F6 0%, #2E7D32 100%)",
+                    "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -215,7 +219,7 @@ export default function ClientArticleList({
 
             {/* ── Category Filters ── */}
             <div className="flex flex-wrap items-center justify-center gap-2">
-              {CATEGORIES.map((cat, i) => {
+              {CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const active = activeCategory === cat.value;
                 return (
@@ -349,10 +353,12 @@ export default function ClientArticleList({
                     </div>
                     {/* Image */}
                     <div className="relative h-56 md:h-auto overflow-hidden">
-                      <img
+                      <Image
                         src={hero.thumbnail}
                         alt={hero.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                       />
                       <div
                         className="absolute inset-0"
@@ -410,10 +416,12 @@ export default function ClientArticleList({
             >
               {/* CTA Background Illustration */}
               <div className="absolute inset-0 z-0 pointer-events-none">
-                <img
+                <Image
                   src="/images/artikel/10.svg"
                   alt="CTA Background"
-                  className="w-full h-full object-cover opacity-90"
+                  fill
+                  sizes="100vw"
+                  className="object-cover opacity-90"
                   style={{ objectPosition: "100% 100%" }}
                 />
               </div>
@@ -470,7 +478,7 @@ function HeroBadge({ category, badge }: { category: string; badge: string }) {
   );
 }
 
-function ArticleCard({ article, index }: { article: any; index: number }) {
+function ArticleCard({ article, index }: { article: ArticleItem; index: number }) {
   const badge = getBadge(article.category);
 
   return (
@@ -490,10 +498,12 @@ function ArticleCard({ article, index }: { article: any; index: number }) {
           {/* Thumbnail */}
           <div className="relative aspect-video overflow-hidden">
             {article.thumbnail ? (
-              <img
+              <Image
                 src={article.thumbnail}
                 alt={article.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"
               />
             ) : (
               <div

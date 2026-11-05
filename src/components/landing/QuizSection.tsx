@@ -83,13 +83,12 @@ export function QuizSection() {
                 ))}
               </div>
 
-              <Link href="/kuis">
-                <button
-                  className="group w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-primary hover:from-primary hover:to-primary text-white font-bold text-base transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5"
-                >
-                  Mulai Refleksi
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+              <Link
+                href="/kuis"
+                className="group w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-primary hover:from-primary hover:to-primary text-white font-bold text-base transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5"
+              >
+                Mulai Refleksi
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
 
               <p className="text-slate-400 font-medium text-xs text-center mt-5 uppercase tracking-wider">Anonim & Gratis · Tidak perlu daftar</p>
