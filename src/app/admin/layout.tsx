@@ -8,8 +8,8 @@ import {
   Database,
   QrCode,
   LogOut,
-  Settings,
-  HelpCircle,
+  LucideIcon,
+  ArrowUpRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
@@ -17,7 +17,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 type NavItem = {
   name: string;
   path: string;
-  icon: any;
+  icon: LucideIcon;
   badge?: number;
 };
 
@@ -70,11 +70,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Logo Section */}
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-              S
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-info flex items-center justify-center text-white font-bold text-lg shadow-sm">
+              G
             </div>
             <div>
-              <h1 className="font-bold text-gray-900 text-base">SOSIO</h1>
+              <h1 className="font-bold text-gray-900 text-base">GESAMEGA</h1>
               <p className="text-xs text-gray-500 font-medium">Admin Panel</p>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                       href={item.path}
                       className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 group ${
                         isActive
-                          ? "bg-gradient-to-r from-orange-50 to-orange-50 text-orange-700 font-semibold shadow-sm"
+                          ? "bg-primary/10 text-primary font-semibold shadow-sm"
                           : "text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900"
                       }`}
                     >
@@ -105,14 +105,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         <Icon
                           className={`w-5 h-5 transition-transform ${
                             isActive
-                              ? "text-orange-600"
+                              ? "text-primary"
                               : "text-gray-400 group-hover:text-gray-600"
                           }`}
                         />
                         <span>{item.name}</span>
                       </div>
                       {item.badge && (
-                        <span className="inline-block min-w-[24px] h-6 px-2 bg-orange-500 text-white text-xs font-bold rounded-full">
+                        <span className="inline-block min-w-[24px] h-6 px-2 bg-primary text-white text-xs font-bold rounded-full">
                           {item.badge}
                         </span>
                       )}
@@ -139,12 +139,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Main Content */}
       <main className="flex-1 ml-64 min-h-screen">
         {/* Top Bar */}
-        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 px-8 py-4">
+        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/60 px-8 py-3.5">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-gray-400 font-medium">Admin</span>
+              <span className="text-gray-300">/</span>
+              <span className="text-slate-800 font-semibold">
                 {pathname === "/admin"
-                  ? "Beranda"
+                  ? "Dashboard"
                   : pathname.includes("data-kuis")
                   ? "Manajemen Kuis"
                   : pathname.includes("data-survei")
@@ -154,10 +156,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                   : pathname.includes("qr-survei")
                   ? "Generator QR Survei"
                   : "Admin"}
-              </h2>
+              </span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold cursor-pointer hover:shadow-lg transition-shadow" title="Profile">
+              <Link
+                href="/"
+                target="_blank"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-primary px-3 py-1.5 rounded-lg border border-slate-200 hover:border-primary-soft bg-white transition-all shadow-xs"
+              >
+                Lihat Web Publik
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-info flex items-center justify-center text-white text-xs font-bold shadow-xs cursor-default" title="Administrator">
                 A
               </div>
             </div>

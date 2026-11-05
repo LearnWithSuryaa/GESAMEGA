@@ -3,25 +3,38 @@ import {
   Users,
   FileText,
   BarChart3,
-  TrendingUp,
-  ArrowUpRight,
   CheckCircle2,
   Database,
   QrCode,
   ArrowRight,
   Activity,
+  School,
+  ArrowUpRight,
+  Calendar,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
+
+interface RecentQuizItem {
+  id: string;
+  user_name: string;
+  result_category: string;
+  created_at: string;
+}
+
+interface RecentSurveyItem {
+  id: string;
+  nama: string;
+  created_at: string;
+}
 
 export const revalidate = 0;
 
 async function getStats() {
-  const [quizRes, surveyRes, recentQuizRes, recentSurveyRes] =
+  const [quizRes, surveyRes, recentQuizRes, recentSurveyRes, schoolsRes] =
     await Promise.all([
       supabase.from("quiz_results").select("id, result_category, created_at"),
-      supabase
-        .from("survey_results")
-        .select("id, created_at", { count: "exact" }),
+      supabase.from("survey_results").select("id, created_at"),
       supabase
         .from("quiz_results")
         .select("id, user_name, result_category, created_at")
@@ -32,15 +45,20 @@ async function getStats() {
         .select("id, nama, created_at")
         .order("created_at", { ascending: false })
         .limit(5),
+      supabase.from("schools").select("id", { count: "exact", head: true }),
     ]);
 
   const quizRows = quizRes.data || [];
+  const surveyRows = surveyRes.data || [];
   const totalQuizzes = quizRows.length;
-  const totalSurveys = surveyRes.count || 0;
+  const totalSurveys = surveyRows.length;
+  const totalSchools = schoolsRes.count || 0;
 
   const categories: Record<string, number> = {};
   quizRows.forEach((r) => {
-    categories[r.result_category] = (categories[r.result_category] || 0) + 1;
+    if (r.result_category) {
+      categories[r.result_category] = (categories[r.result_category] || 0) + 1;
+    }
   });
 
   const now = new Date();
@@ -50,21 +68,28 @@ async function getStats() {
     (r) => new Date(r.created_at) >= sevenDaysAgo
   ).length;
 
+  const surveysThisWeek = surveyRows.filter(
+    (r) => new Date(r.created_at) >= sevenDaysAgo
+  ).length;
+
   const recentQuizzes = (recentQuizRes.data || []).slice(0, 5);
   const recentSurveys = (recentSurveyRes.data || []).slice(0, 5);
 
   return {
     totalQuizzes,
     totalSurveys,
+    totalSchools,
     totalUsers: totalQuizzes + totalSurveys,
     categories,
     quizzesThisWeek,
+    surveysThisWeek,
     recentQuizzes,
     recentSurveys,
   };
 }
 
 function getInitials(name: string) {
+  if (!name) return "??";
   return name
     .split(" ")
     .filter(Boolean)
@@ -74,52 +99,57 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleString("id-ID", {
+function formatRelativeOrDate(dateStr: string) {
+  if (!dateStr) return "-";
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffInMinutes = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60)
+  );
+
+  if (diffInMinutes < 1) return "Baru saja";
+  if (diffInMinutes < 60) return `${diffInMinutes} mnt lalu`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours} jam lalu`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) return `${diffInDays} hari lalu`;
+
+  return date.toLocaleDateString("id-ID", {
     day: "numeric",
     month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
+    year: "numeric",
   });
 }
 
 const CATEGORY_CONFIG: Record<
   string,
-  { bar: string; badge: string; badgeText: string; dot: string }
+  { bar: string; badge: string; dot: string; textColor: string }
 > = {
   "Sangat Peduli": {
     bar: "bg-emerald-500",
-    badge: "bg-emerald-50 text-emerald-700 border border-emerald-100",
-    badgeText: "text-emerald-700",
+    badge: "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
     dot: "bg-emerald-500",
+    textColor: "text-emerald-700",
   },
   "Peduli Sosial": {
     bar: "bg-blue-500",
-    badge: "bg-blue-50 text-blue-700 border border-blue-100",
-    badgeText: "text-blue-700",
+    badge: "bg-blue-50 text-blue-700 border border-blue-200/60",
     dot: "bg-blue-500",
+    textColor: "text-blue-700",
   },
   "Cukup Peduli": {
     bar: "bg-amber-500",
-    badge: "bg-amber-50 text-amber-700 border border-amber-100",
-    badgeText: "text-amber-700",
+    badge: "bg-amber-50 text-amber-700 border border-amber-200/60",
     dot: "bg-amber-500",
+    textColor: "text-amber-700",
   },
   "Kurang Peduli": {
-    bar: "bg-red-500",
-    badge: "bg-red-50 text-red-700 border border-red-100",
-    badgeText: "text-red-700",
-    dot: "bg-red-500",
+    bar: "bg-rose-500",
+    badge: "bg-rose-50 text-rose-700 border border-rose-200/60",
+    dot: "bg-rose-500",
+    textColor: "text-rose-700",
   },
 };
-
-const AVATAR_COLORS = [
-  { bg: "bg-blue-50", text: "text-blue-700" },
-  { bg: "bg-emerald-50", text: "text-emerald-700" },
-  { bg: "bg-orange-50", text: "text-orange-700" },
-  { bg: "bg-purple-50", text: "text-purple-700" },
-  { bg: "bg-amber-50", text: "text-amber-700" },
-];
 
 export default async function AdminDashboard() {
   const stats = await getStats();
@@ -132,145 +162,161 @@ export default async function AdminDashboard() {
     0
   );
 
+  const dominantCategory = categories.length > 0 ? categories[0][0] : null;
+
+  const todayStr = new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
-    <div className="min-h-screen bg-[#F7F6F3] p-6 font-sans">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-7">
+    <div className="space-y-8 font-sans">
+      {/* ── Top Header Banner ── */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 border-b border-slate-200/60">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-gray-900 leading-tight">
-            Dashboard
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary mb-1">
+            <span className="w-2 h-2 rounded-full bg-primary" />
+            Panel Pengelola Ekosistem
+          </div>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
+            Ringkasan Platform
           </h1>
-          <p className="text-sm text-gray-400 mt-1 font-normal">
-            Pantau aktivitas &amp; metrik platform secara real-time
+          <p className="text-sm text-slate-500 mt-1 flex items-center gap-2">
+            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+            {todayStr}
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-full self-start">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Live · Aktif
+
+        <div className="flex items-center gap-3 self-start md:self-auto">
+          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200/70 text-emerald-800 text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            Database Terhubung
+          </div>
+          <Link
+            href="/peta"
+            target="_blank"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-primary bg-white border border-slate-200 px-3.5 py-1.5 rounded-full shadow-xs hover:border-primary-soft transition-all"
+          >
+            Peta Publik
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
 
-      {/* Main Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        {[
-          {
-            label: "Total Partisipasi",
-            value: stats.totalUsers,
-            icon: Users,
-            iconClass: "text-blue-600",
-            iconBg: "bg-blue-50",
-            foot: "Semua waktu",
-          },
-          {
-            label: "Kuis Diselesaikan",
-            value: stats.totalQuizzes,
-            icon: CheckCircle2,
-            iconClass: "text-orange-600",
-            iconBg: "bg-orange-50",
-            foot: "+12% minggu ini",
-            footClass: "text-emerald-600",
-          },
-          {
-            label: "Survei Diselesaikan",
-            value: stats.totalSurveys,
-            icon: FileText,
-            iconClass: "text-emerald-600",
-            iconBg: "bg-emerald-50",
-            foot: "+8% minggu ini",
-            footClass: "text-emerald-600",
-          },
-        ].map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <div
-              key={i}
-              className="bg-white rounded-2xl border border-black/[0.07] p-5 shadow-sm"
-            >
-              <div
-                className={`w-9 h-9 ${s.iconBg} rounded-lg flex items-center justify-center mb-4`}
-              >
-                <Icon className={`w-4 h-4 ${s.iconClass}`} />
-              </div>
-              <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest mb-1">
-                {s.label}
-              </p>
-              <p className="text-4xl font-semibold text-gray-900 tabular-nums leading-none tracking-tight">
-                {s.value.toLocaleString("id-ID")}
-              </p>
-              <p
-                className={`text-xs mt-2.5 ${s.footClass ?? "text-gray-400"}`}
-              >
-                {s.foot}
-              </p>
+      {/* ── 4 Main Metric Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: Total Partisipasi */}
+        <div className="relative bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all duration-300 group overflow-hidden">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Total Partisipasi
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary transition-transform group-hover:scale-105">
+              <Users className="w-5 h-5" />
             </div>
-          );
-        })}
+          </div>
+          <p className="text-3xl md:text-4xl font-extrabold text-slate-900 tabular-nums tracking-tight">
+            {stats.totalUsers.toLocaleString("id-ID")}
+          </p>
+          <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+            <span className="inline-flex items-center text-primary font-bold">
+              Kuis &amp; Survei
+            </span>
+            <span>• Seluruh instansi</span>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary to-info opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+
+        {/* Card 2: Kuis Siswa */}
+        <div className="relative bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all duration-300 group overflow-hidden">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Kuis Diselesaikan
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/60 flex items-center justify-center text-emerald-600 transition-transform group-hover:scale-105">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+          </div>
+          <p className="text-3xl md:text-4xl font-extrabold text-slate-900 tabular-nums tracking-tight">
+            {stats.totalQuizzes.toLocaleString("id-ID")}
+          </p>
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-emerald-700 font-semibold">
+            <span className="px-1.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-100">
+              +{stats.quizzesThisWeek} minggu ini
+            </span>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+
+        {/* Card 3: Survei Sekolah */}
+        <div className="relative bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all duration-300 group overflow-hidden">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Survei Instansi
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200/60 flex items-center justify-center text-info transition-transform group-hover:scale-105">
+              <FileText className="w-5 h-5" />
+            </div>
+          </div>
+          <p className="text-3xl md:text-4xl font-extrabold text-slate-900 tabular-nums tracking-tight">
+            {stats.totalSurveys.toLocaleString("id-ID")}
+          </p>
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-blue-700 font-semibold">
+            <span className="px-1.5 py-0.5 rounded-md bg-blue-50 border border-blue-100">
+              +{stats.surveysThisWeek} minggu ini
+            </span>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-info opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+
+        {/* Card 4: Sekolah Terdaftar */}
+        <div className="relative bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all duration-300 group overflow-hidden">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Database Sekolah
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-center text-amber-600 transition-transform group-hover:scale-105">
+              <School className="w-5 h-5" />
+            </div>
+          </div>
+          <p className="text-3xl md:text-4xl font-extrabold text-slate-900 tabular-nums tracking-tight">
+            {stats.totalSchools.toLocaleString("id-ID")}
+          </p>
+          <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+            <span className="font-semibold text-amber-700">Wilayah Sidoarjo</span>
+            <span>• Siap dipetakan</span>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
       </div>
 
-      {/* Weekly Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        {[
-          {
-            label: "Kuis minggu ini",
-            value: stats.quizzesThisWeek,
-            trend: "+12%",
-            icon: BarChart3,
-            iconClass: "text-orange-600",
-            iconBg: "bg-orange-50",
-          },
-          {
-            label: "Survei minggu ini",
-            value: 0,
-            trend: "+8%",
-            icon: TrendingUp,
-            iconClass: "text-emerald-600",
-            iconBg: "bg-emerald-50",
-          },
-        ].map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <div
-              key={i}
-              className="bg-white rounded-2xl border border-black/[0.07] p-5 flex items-center justify-between shadow-sm"
-            >
+      {/* ── Mid Section: Kategori Kuis & Quick Actions Hub ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Kolom Kiri (8/12): Grafik Distribusi Kategori Kuis */}
+        <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-6 md:p-7 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-surface-alt flex items-center justify-center border border-primary-soft/50 text-primary">
+                <BarChart3 className="w-5 h-5" />
+              </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1.5">{s.label}</p>
-                <p className="text-3xl font-semibold text-gray-900 tabular-nums tracking-tight">
-                  {s.value.toLocaleString("id-ID")}
+                <h2 className="text-base font-bold text-slate-900">
+                  Distribusi Refleksi Siswa
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Berdasarkan {totalCategoryCount} responden kuis yang tercatat
                 </p>
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <div
-                  className={`w-9 h-9 ${s.iconBg} rounded-lg flex items-center justify-center`}
-                >
-                  <Icon className={`w-4 h-4 ${s.iconClass}`} />
-                </div>
-                <span className="flex items-center gap-0.5 text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
-                  <ArrowUpRight className="w-3 h-3" />
-                  {s.trend}
-                </span>
-              </div>
             </div>
-          );
-        })}
-      </div>
 
-      {/* Main Grid: Category Chart + Quick Links */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        {/* Category Distribution */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-black/[0.07] p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-4 h-4 text-orange-600" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900">
-                Distribusi Kategori Kuis
-              </h2>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {totalCategoryCount} responden
-              </p>
-            </div>
+            {dominantCategory && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-50 border border-slate-200 text-slate-700">
+                <span className="text-slate-400 font-normal">Dominan:</span>
+                <span className="text-primary font-bold">{dominantCategory}</span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-5">
@@ -282,23 +328,32 @@ export default async function AdminDashboard() {
               const cfg = CATEGORY_CONFIG[category] ?? {
                 bar: "bg-blue-500",
                 badge: "bg-blue-50 text-blue-700 border border-blue-100",
+                dot: "bg-blue-500",
+                textColor: "text-blue-700",
               };
+
               return (
-                <div key={category}>
-                  <div className="flex justify-between items-baseline mb-1.5">
-                    <span className="text-sm font-medium text-gray-800">
-                      {category}
-                    </span>
-                    <span className="text-xs tabular-nums text-gray-400">
-                      <span className="font-semibold text-gray-700 mr-1">
-                        {count}
+                <div key={category} className="group">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2.5 h-2.5 rounded-full ${cfg.dot}`} />
+                      <span className="text-sm font-semibold text-slate-800">
+                        {category}
                       </span>
-                      {pct}%
-                    </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-700">
+                        {count}{" "}
+                        <span className="text-slate-400 font-normal">siswa</span>
+                      </span>
+                      <span className="text-xs font-extrabold text-slate-900 tabular-nums px-2 py-0.5 rounded-md bg-slate-100">
+                        {pct}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden p-0.5">
                     <div
-                      className={`h-full rounded-full ${cfg.bar}`}
+                      className={`h-full rounded-full transition-all duration-700 ease-out ${cfg.bar}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -307,233 +362,256 @@ export default async function AdminDashboard() {
             })}
 
             {categories.length === 0 && (
-              <div className="text-center py-10">
-                <Activity className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-                <p className="text-sm text-gray-400">Belum ada data kuis</p>
+              <div className="text-center py-12">
+                <Activity className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                <p className="text-sm text-slate-500 font-medium">
+                  Belum ada data kuis masuk
+                </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="flex flex-col gap-3">
-          {[
-            {
-              href: "/admin/data-kuis",
-              icon: Database,
-              iconClass: "text-blue-600",
-              iconBg: "bg-blue-50",
-              title: "Data Kuis",
-              sub: "Lihat semua hasil kuis siswa",
-              linkColor: "text-blue-600",
-            },
-            {
-              href: "/admin/data-survei",
-              icon: FileText,
-              iconClass: "text-emerald-600",
-              iconBg: "bg-emerald-50",
-              title: "Data Survei",
-              sub: "Lihat hasil survei sekolah",
-              linkColor: "text-emerald-600",
-            },
-            {
-              href: "/admin/qr-generator",
-              icon: QrCode,
-              iconClass: "text-purple-600",
-              iconBg: "bg-purple-50",
-              title: "Kelola QR",
-              sub: "Buat & kelola kode QR",
-              linkColor: "text-purple-600",
-            },
-          ].map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={i}
-                href={item.href}
-                className="bg-white rounded-2xl border border-black/[0.07] p-4 flex items-center gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 group"
-              >
-                <div
-                  className={`w-9 h-9 ${item.iconBg} rounded-lg flex items-center justify-center flex-shrink-0`}
-                >
-                  <Icon className={`w-4 h-4 ${item.iconClass}`} />
+        {/* Kolom Kanan (4/12): Pusat Aksi Cepat (Quick Hub) */}
+        <div className="lg:col-span-4 flex flex-col gap-3">
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                    <Layers className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Aksi &amp; Generator
+                  </h3>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900">
-                    {item.title}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-0.5 truncate">
-                    {item.sub}
-                  </p>
-                </div>
-                <ArrowRight
-                  className={`w-4 h-4 text-gray-300 group-hover:${item.linkColor} group-hover:translate-x-0.5 transition-all flex-shrink-0`}
-                />
-              </Link>
-            );
-          })}
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Menu Cepat
+                </span>
+              </div>
 
-          {/* Category Mini Summary */}
-          {categories.length > 0 && (
-            <div className="bg-white rounded-2xl border border-black/[0.07] p-4 shadow-sm flex-1">
-              <p className="text-[11px] font-medium text-gray-400 uppercase tracking-widest mb-3">
-                Ringkasan Kategori
-              </p>
-              <div className="space-y-2.5">
-                {categories.map(([name, count]) => {
-                  const pct = Math.round((count / totalCategoryCount) * 100);
-                  const cfg = CATEGORY_CONFIG[name];
+              <div className="space-y-2">
+                {[
+                  {
+                    href: "/admin/qr-generator",
+                    icon: QrCode,
+                    color: "text-primary bg-primary/10",
+                    title: "Generator QR Kuis",
+                    desc: "Buat kode QR kuis untuk sekolah",
+                  },
+                  {
+                    href: "/admin/qr-survei",
+                    icon: QrCode,
+                    color: "text-info bg-blue-50",
+                    title: "Generator QR Survei",
+                    desc: "Buat kode QR evaluasi instansi",
+                  },
+                  {
+                    href: "/admin/data-kuis",
+                    icon: Database,
+                    color: "text-emerald-600 bg-emerald-50",
+                    title: "Tabel Data Kuis",
+                    desc: "Eksplorasi & ekspor hasil kuis siswa",
+                  },
+                  {
+                    href: "/admin/data-survei",
+                    icon: FileText,
+                    color: "text-amber-600 bg-amber-50",
+                    title: "Tabel Data Survei",
+                    desc: "Daftar hasil survei instansi",
+                  },
+                ].map((act) => {
+                  const Icon = act.icon;
                   return (
-                    <div key={name} className="flex items-center gap-2 text-xs">
-                      <span
-                        className={`w-2 h-2 rounded-sm flex-shrink-0 ${cfg?.dot ?? "bg-blue-500"}`}
-                      />
-                      <span className="text-gray-600 flex-1 truncate">
-                        {name}
-                      </span>
-                      <span className="tabular-nums text-gray-400 font-medium">
-                        {pct}%
-                      </span>
-                    </div>
+                    <Link
+                      key={act.href}
+                      href={act.href}
+                      className="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-primary-soft hover:bg-surface-alt/40 transition-all duration-200"
+                    >
+                      <div
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${act.color} transition-transform group-hover:scale-105`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-900 group-hover:text-primary transition-colors">
+                          {act.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500 truncate">
+                          {act.desc}
+                        </p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                    </Link>
                   );
                 })}
               </div>
             </div>
-          )}
+
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <Link
+                href="/peta"
+                target="_blank"
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs transition-colors border border-slate-200"
+              >
+                Pratinjau Peta Sebaran Publik
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Recent Quizzes */}
-        <div className="bg-white rounded-2xl border border-black/[0.07] shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-5 pt-5 pb-4">
-            <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
-              <CheckCircle2 className="w-4 h-4 text-orange-600" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900">
-                Kuis Terbaru
-              </h2>
-              <p className="text-xs text-gray-400 mt-0.5">
-                5 aktivitas terakhir
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-black/[0.06]" />
-
-          <div className="px-3 py-2">
-            {stats.recentQuizzes.length > 0 ? (
-              stats.recentQuizzes.map((quiz: any, i: number) => {
-                const initials = getInitials(quiz.user_name);
-                const av = AVATAR_COLORS[i % AVATAR_COLORS.length];
-                const cfg = CATEGORY_CONFIG[quiz.result_category];
-                return (
-                  <div
-                    key={quiz.id}
-                    className="flex items-center justify-between px-2 py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-8 h-8 rounded-lg ${av.bg} ${av.text} flex items-center justify-center text-[11px] font-semibold flex-shrink-0`}
-                      >
-                        {initials}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 leading-tight">
-                          {quiz.user_name}
-                        </p>
-                        <p className="text-[11px] text-gray-400 mt-0.5">
-                          {formatDate(quiz.created_at)}
-                        </p>
-                      </div>
-                    </div>
-                    <span
-                      className={`text-[11px] font-medium px-2.5 py-1 rounded-lg ${cfg?.badge ?? "bg-gray-100 text-gray-600"}`}
-                    >
-                      {quiz.result_category}
-                    </span>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-sm text-gray-400">Belum ada data</p>
+      {/* ── Bottom Section: Dual Feed Aktivitas Terkini ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Kuis Terbaru */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between p-5 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900">
+                    Kuis Siswa Terbaru
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    5 pengisian kuis terakhir
+                  </p>
+                </div>
               </div>
-            )}
+              <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
+                Siswa
+              </span>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {stats.recentQuizzes.length > 0 ? (
+                (stats.recentQuizzes as RecentQuizItem[]).map((quiz) => {
+                  const initials = getInitials(quiz.user_name);
+                  const cfg = CATEGORY_CONFIG[quiz.result_category];
+
+                  return (
+                    <div
+                      key={quiz.id}
+                      className="flex items-center justify-between p-4 hover:bg-slate-50/70 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 min-w-0 pr-2">
+                        <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">
+                          {initials}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-slate-900 truncate">
+                            {quiz.user_name}
+                          </p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {formatRelativeOrDate(quiz.created_at)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <span
+                        className={`text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0 ${
+                          cfg?.badge ?? "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {quiz.result_category}
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-xs text-slate-400 font-medium">
+                    Belum ada kuis masuk
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="border-t border-black/[0.06] px-5 py-3">
+          <div className="p-4 bg-slate-50/60 border-t border-slate-100">
             <Link
               href="/admin/data-kuis"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-light transition-colors"
             >
-              Lihat semua
-              <ArrowRight className="w-3 h-3" />
+              Lihat seluruh data kuis
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
 
-        {/* Recent Surveys */}
-        <div className="bg-white rounded-2xl border border-black/[0.07] shadow-sm overflow-hidden">
-          <div className="flex items-center gap-3 px-5 pt-5 pb-4">
-            <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
-              <FileText className="w-4 h-4 text-emerald-600" />
+        {/* Survei Terbaru */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between p-5 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-info border border-blue-100">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900">
+                    Survei Instansi Terbaru
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    5 pengisian survei terakhir
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+                Sekolah
+              </span>
             </div>
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900">
-                Survei Terbaru
-              </h2>
-              <p className="text-xs text-gray-400 mt-0.5">
-                5 aktivitas terakhir
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-black/[0.06]" />
 
-          <div className="px-3 py-2">
-            {stats.recentSurveys.length > 0 ? (
-              stats.recentSurveys.map((survey: any, i: number) => {
-                const initials = getInitials(survey.nama);
-                const av = AVATAR_COLORS[i % AVATAR_COLORS.length];
-                return (
-                  <div
-                    key={survey.id}
-                    className="flex items-center justify-between px-2 py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-8 h-8 rounded-lg ${av.bg} ${av.text} flex items-center justify-center text-[11px] font-semibold flex-shrink-0`}
-                      >
-                        {initials}
+            <div className="divide-y divide-slate-100">
+              {stats.recentSurveys.length > 0 ? (
+                (stats.recentSurveys as RecentSurveyItem[]).map((survey) => {
+                  const initials = getInitials(survey.nama);
+
+                  return (
+                    <div
+                      key={survey.id}
+                      className="flex items-center justify-between p-4 hover:bg-slate-50/70 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 min-w-0 pr-2">
+                        <div className="w-9 h-9 rounded-xl bg-blue-50 text-info border border-blue-200/50 flex items-center justify-center text-xs font-bold shrink-0">
+                          {initials}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-slate-900 truncate">
+                            {survey.nama}
+                          </p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {formatRelativeOrDate(survey.created_at)}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 leading-tight">
-                          {survey.nama}
-                        </p>
-                        <p className="text-[11px] text-gray-400 mt-0.5">
-                          {formatDate(survey.created_at)}
-                        </p>
+
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[11px] font-semibold shrink-0">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        Tervalidasi
                       </div>
                     </div>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-sm text-gray-400">Belum ada data</p>
-              </div>
-            )}
+                  );
+                })
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-xs text-slate-400 font-medium">
+                    Belum ada survei masuk
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="border-t border-black/[0.06] px-5 py-3">
+          <div className="p-4 bg-slate-50/60 border-t border-slate-100">
             <Link
               href="/admin/data-survei"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-info hover:text-blue-700 transition-colors"
             >
-              Lihat semua
-              <ArrowRight className="w-3 h-3" />
+              Lihat seluruh data survei
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>

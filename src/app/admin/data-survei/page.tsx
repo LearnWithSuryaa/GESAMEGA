@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   FileText,
   Download,
   Search,
-  Filter,
   X,
   MapPin,
 } from "lucide-react";
@@ -13,7 +12,7 @@ import {
 interface SurveyResult {
   id: string;
   nama: string;
-  jawaban: Record<string, any>;
+  jawaban: Record<string, unknown>;
   source: string | null;
   created_at: string;
   schools?: {
@@ -43,7 +42,7 @@ export default function DataSurveiPage() {
     }
   };
 
-  useMemo(() => {
+  useEffect(() => {
     fetchData();
   }, []);
 

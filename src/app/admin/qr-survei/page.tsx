@@ -183,7 +183,7 @@ export default function QRSurveiPage() {
       drawBlob(W - 60, 100, 180, "#64B5F6", 0.25);
       drawBlob(W - 40, H - 80, 200, "#2E7D32", 0.3);
       drawBlob(50, H - 60, 160, "#1E88E5", 0.2);
-      drawBlob(W / 2, H / 2, 260, "#c2410c", 0.12);
+      drawBlob(W / 2, H / 2, 260, "#A5D6A7", 0.15);
 
       // 3. Dot grid
       ctx.save();
@@ -449,7 +449,7 @@ export default function QRSurveiPage() {
                 onChange={(e) => setCampaignName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                 placeholder="Nama event / sekolah..."
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-900 focus:border-info focus:bg-white focus:ring-2 focus:ring-orange-50 outline-none transition-all"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-900 focus:border-info focus:bg-white focus:ring-2 focus:ring-primary/10 outline-none transition-all"
               />
               <button
                 onClick={handleCreate}

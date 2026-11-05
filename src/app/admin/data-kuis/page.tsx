@@ -5,7 +5,6 @@ import {
   Table as TableIcon,
   Download,
   Search,
-  Filter,
   X,
   ChevronLeft,
   ChevronRight,
