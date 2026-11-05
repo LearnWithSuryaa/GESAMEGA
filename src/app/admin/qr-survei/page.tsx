@@ -137,13 +137,39 @@ export default function QRSurveiPage() {
     const svg = container.querySelector("svg");
     if (!svg) return;
 
-    const W = 600;
-    const H = 760;
+    // Resolusi tinggi proporsional (standee A4/A5 resmi)
+    const W = 720;
+    const H = 940;
     const canvas = document.createElement("canvas");
     canvas.width = W;
     canvas.height = H;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    // Helper: Rounded Rectangle
+    const drawRoundRect = (
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      r: number,
+      fill = true,
+      stroke = false
+    ) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.arcTo(x + w, y, x + w, y + r, r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+      ctx.lineTo(x + r, y + h);
+      ctx.arcTo(x, y + h, x, y + h - r, r);
+      ctx.lineTo(x, y + r);
+      ctx.arcTo(x, y, x + r, y, r);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    };
 
     const serializer = new XMLSerializer();
     const svgStr = serializer.serializeToString(svg);
@@ -152,228 +178,213 @@ export default function QRSurveiPage() {
     const qrImg = new Image();
 
     qrImg.onload = () => {
-      // 1. Background gradient
-      const bg = ctx.createLinearGradient(0, 0, W, H);
-      bg.addColorStop(0, "#1c0a00");
-      bg.addColorStop(0.5, "#3d1200");
-      bg.addColorStop(1, "#1a0800");
-      ctx.fillStyle = bg;
+      // 1. Background dasar putih bersih (resmi & hemat tinta printer)
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, W, H);
 
-      // 2. Abstract glowing blobs
-      const drawBlob = (
-        x: number,
-        y: number,
-        r: number,
-        color: string,
-        alpha: number,
-      ) => {
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        g.addColorStop(0, color);
-        g.addColorStop(1, "transparent");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      };
-      drawBlob(80, 80, 220, "#2E7D32", 0.35);
-      drawBlob(W - 60, 100, 180, "#64B5F6", 0.25);
-      drawBlob(W - 40, H - 80, 200, "#2E7D32", 0.3);
-      drawBlob(50, H - 60, 160, "#1E88E5", 0.2);
-      drawBlob(W / 2, H / 2, 260, "#A5D6A7", 0.15);
+      // 2. Outer Border Frame halus
+      ctx.strokeStyle = "#E2E8F0";
+      ctx.lineWidth = 1.5;
+      drawRoundRect(24, 24, W - 48, H - 48, 28, false, true);
 
-      // 3. Dot grid
-      ctx.save();
-      ctx.globalAlpha = 0.06;
-      ctx.fillStyle = "#64B5F6";
-      for (let x = 20; x < W; x += 28) {
-        for (let y = 20; y < H; y += 28) {
-          ctx.beginPath();
-          ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-      ctx.restore();
+      // 3. Top Accent Bar (Gradien Biru-ke-Hijau GESAMEGA)
+      const barGrad = ctx.createLinearGradient(40, 28, W - 40, 28);
+      barGrad.addColorStop(0, "#1E88E5");
+      barGrad.addColorStop(1, "#2E7D32");
+      ctx.fillStyle = barGrad;
+      drawRoundRect(40, 28, W - 80, 6, 3, true, false);
 
-      // 4. Wavy abstract lines
-      ctx.save();
-      ctx.globalAlpha = 0.07;
-      ctx.strokeStyle = "#64B5F6";
-      ctx.lineWidth = 1;
-      for (let i = 0; i < 8; i++) {
-        const y = 40 + i * 100;
-        ctx.beginPath();
-        ctx.moveTo(0, y + 30);
-        ctx.bezierCurveTo(W * 0.3, y - 20, W * 0.7, y + 60, W, y + 10);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // 5. GESAMEGA top badge
-      const badgeY = 44;
-      const pillW = 200;
-      const pillH = 38;
+      // 4. Header Badge Kategori Survei
+      const badgeY = 56;
+      const pillW = 240;
+      const pillH = 30;
       const pillX = (W - pillW) / 2;
-      ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(pillX, badgeY, pillW, pillH, 19);
-      ctx.fillStyle = "rgba(46, 125, 50,0.15)";
-      ctx.fill();
-      ctx.strokeStyle = "rgba(46, 125, 50,0.4)";
+      ctx.fillStyle = "#E3F2FD";
+      ctx.strokeStyle = "#BBDEFB";
       ctx.lineWidth = 1;
+      drawRoundRect(pillX, badgeY, pillW, pillH, 15, true, true);
+
+      ctx.fillStyle = "#1E88E5";
+      ctx.font = "bold 10.5px system-ui, -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("SURVEI KESIAPAN SEKOLAH", W / 2, badgeY + pillH / 2);
+
+      // 5. Nama Gerakan & Subtitle
+      ctx.fillStyle = "#0F172A";
+      ctx.font = "bold 30px system-ui, -apple-system, sans-serif";
+      ctx.fillText("GESAMEGA", W / 2, badgeY + 58);
+
+      ctx.fillStyle = "#64748B";
+      ctx.font = "500 12.5px system-ui, -apple-system, sans-serif";
+      ctx.fillText("Gerakan Sekolah Bijak Mengelola Gadget", W / 2, badgeY + 82);
+
+      // Divider halus
+      ctx.strokeStyle = "#F1F5F9";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(60, badgeY + 104);
+      ctx.lineTo(W - 60, badgeY + 104);
       ctx.stroke();
-      ctx.fillStyle = "#64B5F6";
-      ctx.font = "bold 13px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("✦  GESAMEGA  ✦", W / 2, badgeY + pillH / 2);
-      ctx.restore();
 
-      // 6. White QR card
-      const cardW = 300;
-      const cardH = 300;
-      const cardX = (W - cardW) / 2;
-      const cardY = 106;
-      const cardR = 24;
+      // 6. Sasaran Kampanye / Instansi
+      const campY = badgeY + 124;
+      ctx.fillStyle = "#94A3B8";
+      ctx.font = "bold 10px system-ui, -apple-system, sans-serif";
+      ctx.fillText("TARGET KAMPANYE SURVEI", W / 2, campY);
 
-      ctx.save();
-      ctx.shadowColor = "#000";
-      ctx.shadowBlur = 50;
-      ctx.shadowOffsetY = 16;
-      ctx.globalAlpha = 0.5;
-      ctx.fillStyle = "#fff";
-      ctx.beginPath();
-      ctx.roundRect(cardX, cardY, cardW, cardH, cardR);
-      ctx.fill();
-      ctx.restore();
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(cardX, cardY, cardW, cardH, cardR);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.clip();
-      const qrPad = 28;
-      ctx.drawImage(
-        qrImg,
-        cardX + qrPad,
-        cardY + qrPad,
-        cardW - qrPad * 2,
-        cardH - qrPad * 2,
-      );
-      ctx.restore();
-
-      // Orange corner accents on card
-      ctx.save();
-      ctx.fillStyle = "#2E7D32";
-      ctx.globalAlpha = 0.85;
-      const as = 18;
-      // top-left corner
-      ctx.beginPath();
-      ctx.moveTo(cardX, cardY + cardR);
-      ctx.arcTo(cardX, cardY, cardX + cardR, cardY, cardR);
-      ctx.lineTo(cardX + as + cardR, cardY);
-      ctx.lineTo(cardX + as + cardR, cardY + as);
-      ctx.lineTo(cardX + as, cardY + as);
-      ctx.lineTo(cardX + as, cardY + as + cardR);
-      ctx.lineTo(cardX, cardY + as + cardR);
-      ctx.closePath();
-      ctx.fill();
-      // bottom-right corner
-      const brX = cardX + cardW;
-      const brY = cardY + cardH;
-      ctx.beginPath();
-      ctx.moveTo(brX, brY - cardR);
-      ctx.arcTo(brX, brY, brX - cardR, brY, cardR);
-      ctx.lineTo(brX - as - cardR, brY);
-      ctx.lineTo(brX - as - cardR, brY - as);
-      ctx.lineTo(brX - as, brY - as);
-      ctx.lineTo(brX - as, brY - as - cardR);
-      ctx.lineTo(brX, brY - as - cardR);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-
-      // 7. Campaign name
-      const nameY = cardY + cardH + 38;
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.font = "500 11px system-ui, sans-serif";
-      ctx.fillStyle = "rgba(253,186,116,0.65)";
-      ctx.textBaseline = "middle";
-      ctx.fillText("K A M P A N Y E", W / 2, nameY);
-      ctx.font = "bold 26px system-ui, sans-serif";
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#1E293B";
+      ctx.font = "bold 22px system-ui, -apple-system, sans-serif";
       let displayName = campaign.name;
-      while (
-        ctx.measureText(displayName).width > W - 80 &&
-        displayName.length > 4
-      ) {
+      while (ctx.measureText(displayName).width > W - 120 && displayName.length > 4) {
         displayName = displayName.slice(0, -1);
       }
       if (displayName !== campaign.name) displayName += "…";
-      ctx.fillText(displayName, W / 2, nameY + 30);
+      ctx.fillText(displayName, W / 2, campY + 26);
+
+      // Source Tag Pill
+      const sourceTag = `Kode Ref: #${campaign.source}`;
+      ctx.font = "500 11.5px system-ui, -apple-system, sans-serif";
+      const tagTW = ctx.measureText(sourceTag).width;
+      const tagW = tagTW + 24;
+      const tagH = 26;
+      const tagX = (W - tagW) / 2;
+      const tagY = campY + 38;
+      ctx.fillStyle = "#F8FAFC";
+      ctx.strokeStyle = "#E2E8F0";
+      ctx.lineWidth = 1;
+      drawRoundRect(tagX, tagY, tagW, tagH, 13, true, true);
+
+      ctx.fillStyle = "#475569";
+      ctx.fillText(sourceTag, W / 2, tagY + tagH / 2);
+
+      // 7. White Card Container untuk QR Code
+      const cardW = 320;
+      const cardH = 320;
+      const cardX = (W - cardW) / 2;
+      const cardY = tagY + 44;
+      const cardR = 20;
+
+      // Soft drop shadow
+      ctx.save();
+      ctx.shadowColor = "rgba(0, 0, 0, 0.05)";
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 6;
+      ctx.fillStyle = "#FFFFFF";
+      ctx.strokeStyle = "#E2E8F0";
+      ctx.lineWidth = 1;
+      drawRoundRect(cardX, cardY, cardW, cardH, cardR, true, true);
       ctx.restore();
 
-      // 8. Source chip
-      const chipY = nameY + 70;
-      const chipText = `source: ${campaign.source}`;
-      ctx.save();
-      ctx.font = "13px 'Courier New', monospace";
-      ctx.textAlign = "center";
-      const chipTW = ctx.measureText(chipText).width;
-      const chipW2 = chipTW + 30;
-      const chipH2 = 32;
-      const chipX2 = (W - chipW2) / 2;
-      ctx.fillStyle = "rgba(46, 125, 50,0.13)";
-      ctx.strokeStyle = "rgba(46, 125, 50,0.3)";
+      // Gambar QR Code
+      const qrPad = 25;
+      const qrSize = cardW - qrPad * 2;
+      ctx.drawImage(qrImg, cardX + qrPad, cardY + qrPad, qrSize, qrSize);
+
+      // Frame Siku Bidik Kamera (Camera Corner Brackets) warna biru
+      const cs = 16;
+      const cPad = 12;
+      ctx.strokeStyle = "#1E88E5";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+
+      // Top-Left
+      ctx.beginPath();
+      ctx.moveTo(cardX + cPad, cardY + cPad + cs);
+      ctx.lineTo(cardX + cPad, cardY + cPad);
+      ctx.lineTo(cardX + cPad + cs, cardY + cPad);
+      ctx.stroke();
+
+      // Top-Right
+      ctx.beginPath();
+      ctx.moveTo(cardX + cardW - cPad - cs, cardY + cPad);
+      ctx.lineTo(cardX + cardW - cPad, cardY + cPad);
+      ctx.lineTo(cardX + cardW - cPad, cardY + cPad + cs);
+      ctx.stroke();
+
+      // Bottom-Left
+      ctx.beginPath();
+      ctx.moveTo(cardX + cPad, cardY + cardH - cPad - cs);
+      ctx.lineTo(cardX + cPad, cardY + cardH - cPad);
+      ctx.lineTo(cardX + cPad + cs, cardY + cardH - cPad);
+      ctx.stroke();
+
+      // Bottom-Right
+      ctx.beginPath();
+      ctx.moveTo(cardX + cardW - cPad - cs, cardY + cardH - cPad);
+      ctx.lineTo(cardX + cardW - cPad, cardY + cardH - cPad);
+      ctx.lineTo(cardX + cardW - cPad, cardY + cardH - cPad - cs);
+      ctx.stroke();
+
+      // Sub-label scan
+      ctx.fillStyle = "#64748B";
+      ctx.font = "500 12px system-ui, -apple-system, sans-serif";
+      ctx.fillText("Pindai dengan kamera HP untuk mengisi survei kesiapan", W / 2, cardY + cardH + 26);
+
+      // 8. Panduan 3 Langkah Cepat
+      const guideW = 560;
+      const guideH = 68;
+      const guideX = (W - guideW) / 2;
+      const guideY = cardY + cardH + 46;
+      ctx.fillStyle = "#F8FAFC";
+      ctx.strokeStyle = "#E2E8F0";
+      ctx.lineWidth = 1;
+      drawRoundRect(guideX, guideY, guideW, guideH, 16, true, true);
+
+      const colW = guideW / 3;
+      const stepsData = [
+        { num: "1", title: "Buka Kamera", sub: "Ponsel / Scanner", bg: "#E3F2FD", fg: "#1E88E5" },
+        { num: "2", title: "Arahkan ke QR", sub: "Fokuskan layar", bg: "#E8F5E9", fg: "#2E7D32" },
+        { num: "3", title: "Isi Survei", sub: "Data instansi", bg: "#E3F2FD", fg: "#1E88E5" },
+      ];
+
+      stepsData.forEach((st, i) => {
+        const cx = guideX + colW * i + colW / 2;
+        // Bullet circle
+        const circleR = 11;
+        const cy = guideY + 24;
+        ctx.fillStyle = st.bg;
+        ctx.beginPath();
+        ctx.arc(cx - 38, cy + 8, circleR, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = st.fg;
+        ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
+        ctx.fillText(st.num, cx - 38, cy + 9);
+
+        // Texts
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#1E293B";
+        ctx.font = "bold 12px system-ui, -apple-system, sans-serif";
+        ctx.fillText(st.title, cx - 20, cy + 4);
+
+        ctx.fillStyle = "#64748B";
+        ctx.font = "10px system-ui, -apple-system, sans-serif";
+        ctx.fillText(st.sub, cx - 20, cy + 18);
+        ctx.textAlign = "center";
+      });
+
+      // 9. Official Footer
+      const footerY = guideY + guideH + 34;
+      ctx.strokeStyle = "#F1F5F9";
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.roundRect(chipX2, chipY, chipW2, chipH2, 8);
-      ctx.fill();
+      ctx.moveTo(60, footerY);
+      ctx.lineTo(W - 60, footerY);
       ctx.stroke();
-      ctx.fillStyle = "#64B5F6";
-      ctx.textBaseline = "middle";
-      ctx.fillText(chipText, W / 2, chipY + chipH2 / 2);
-      ctx.restore();
 
-      // 9. Dashed divider
-      const divY = chipY + chipH2 + 24;
-      ctx.save();
-      ctx.globalAlpha = 0.15;
-      ctx.strokeStyle = "#64B5F6";
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 8]);
-      ctx.beginPath();
-      ctx.moveTo(60, divY);
-      ctx.lineTo(W - 60, divY);
-      ctx.stroke();
-      ctx.restore();
-
-      // 10. Footer text
-      const footerY = divY + 24;
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.font = "12px system-ui, sans-serif";
-      ctx.fillStyle = "rgba(253,186,116,0.5)";
-      ctx.fillText(
-        "Scan QR Code untuk mengisi Survei Diagnostik",
-        W / 2,
-        footerY,
-      );
-      ctx.font = "bold 13px system-ui, sans-serif";
-      ctx.fillStyle = "rgba(46, 125, 50,0.75)";
+      ctx.fillStyle = "#1E88E5";
+      ctx.font = "bold 15px system-ui, -apple-system, sans-serif";
       ctx.fillText("gesamega.web.id", W / 2, footerY + 22);
-      ctx.restore();
+
+      ctx.fillStyle = "#94A3B8";
+      ctx.font = "10.5px system-ui, -apple-system, sans-serif";
+      ctx.fillText("Inisiatif Budaya Digital Sehat — Kabupaten Sidoarjo, Jawa Timur", W / 2, footerY + 38);
 
       // Download
       URL.revokeObjectURL(svgUrl);
       const link = document.createElement("a");
-      link.download = `qr-${campaign.source}.png`;
+      link.download = `qr-survei-${campaign.source}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     };
