@@ -1,4 +1,4 @@
-import { quizRepository, QuizAnswerPayload } from "../repositories/quizRepository";
+import { quizRepository } from "../repositories/quizRepository";
 
 export interface SubmitQuizParams {
   user_name: string;

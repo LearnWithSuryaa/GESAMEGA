@@ -27,14 +27,22 @@ export async function GET() {
       }
     }
 
-    const enriched = (campaignsRes.data || []).map((campaign: any) => ({
+    interface CampaignRow {
+      id: string;
+      name: string;
+      source: string;
+      created_at: string;
+    }
+
+    const enriched = ((campaignsRes.data || []) as CampaignRow[]).map((campaign) => ({
       ...campaign,
       participantCount: countMap[campaign.source] || 0,
     }));
 
     return NextResponse.json({ success: true, data: enriched });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal error";
     console.error("[qr-stats GET] error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

@@ -32,10 +32,11 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to submit quiz";
     console.error("POST /api/submit-quiz error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to submit quiz" },
+      { success: false, error: message },
       { status: 500 },
     );
   }

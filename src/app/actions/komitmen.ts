@@ -51,8 +51,9 @@ export async function submitKomitmen(data: {
     revalidatePath("/peta");
 
     return { success: true, schoolId: updatedSchool?.[0]?.id || data.sekolahId };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Terjadi kesalahan";
     console.error("Server Action Komitmen Error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: message };
   }
 }

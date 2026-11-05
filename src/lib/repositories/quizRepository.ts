@@ -61,7 +61,7 @@ export const quizRepository = {
     // Sort options by score or id if needed, here we sort by id ascending to keep original order
     const formattedData = data?.map(q => ({
       ...q,
-      question_options: q.question_options.sort((a: any, b: any) => a.id - b.id)
+      question_options: (q.question_options as QuestionOption[]).sort((a, b) => a.id - b.id)
     }));
 
     return formattedData as Question[];
@@ -70,7 +70,7 @@ export const quizRepository = {
   async saveQuizResult(
     resultPayload: QuizResultPayload,
     answersPayload: QuizAnswerPayload[]
-  ): Promise<any> {
+  ): Promise<{ id: string }> {
     // 1. Insert Quiz Result
     const { data: resultData, error: resultError } = await supabase
       .from("quiz_results")

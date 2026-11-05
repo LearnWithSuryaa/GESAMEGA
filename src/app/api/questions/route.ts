@@ -19,10 +19,11 @@ export async function GET(request: Request) {
         },
       },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to fetch questions";
     console.error("GET /api/questions error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch questions" },
+      { success: false, error: message },
       { status: 500 },
     );
   }

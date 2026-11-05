@@ -9,7 +9,7 @@ export async function submitSurvey(data: {
   nama: string;
   namaSekolah: string;
   wilayah: string;
-  jawaban: Record<string, any>;
+  jawaban: Record<string, unknown>;
   captchaToken: string;
   source?: string;
 }) {
@@ -116,8 +116,9 @@ export async function submitSurvey(data: {
     revalidatePath("/peta");
 
     return { success: true, schoolId: finalSchoolId };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Terjadi kesalahan";
     console.error("Server Action Error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: message };
   }
 }
