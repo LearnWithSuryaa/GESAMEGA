@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
 import ClientArticleList from "@/components/landing/ClientArticleList";
+import { ArticleItem, DbArticle } from "@/types/article";
 
 export const revalidate = 3600; // ISR cache for 1 hour
 
@@ -23,10 +24,10 @@ export default async function ArtikelPage() {
     .order("created_at", { ascending: false })
     .limit(50);
 
-  let articles: any[] = [];
+  let articles: ArticleItem[] = [];
 
   if (!error && data && data.length > 0) {
-    articles = data.map((d: any, index: number) => {
+    articles = (data as unknown as DbArticle[]).map((d, index: number) => {
       let badgeColor = "bg-gray-50 text-gray-600 border-gray-200";
       let badge = "Artikel";
       switch (d.kategori) {

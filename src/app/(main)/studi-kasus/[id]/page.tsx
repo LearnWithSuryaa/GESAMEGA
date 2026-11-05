@@ -6,11 +6,23 @@ import { motion } from "framer-motion";
 import { ArrowLeft, School, User, TrendingUp, BookOpen, Lock, Zap, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
+interface CaseStudyDetailData {
+  id: string | number;
+  judul: string;
+  isi: string;
+  penulis: string;
+  category: string;
+  impact: string;
+  badge: string;
+  created_at: string;
+  schools: { nama_sekolah: string } | { nama_sekolah: string }[] | null;
+}
+
 export default function StudiKasusDetail({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = use(params);
   const id = unwrappedParams.id;
   
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<CaseStudyDetailData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -93,7 +105,9 @@ export default function StudiKasusDetail({ params }: { params: Promise<{ id: str
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
                <div className="flex items-center gap-2 font-bold bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
                  <School className="w-4 h-4 text-primary" />
-                 {(data.schools as any)?.nama_sekolah || "Sekolah Tidak Diketahui"}
+                 {(Array.isArray(data.schools)
+                   ? data.schools[0]?.nama_sekolah
+                   : data.schools?.nama_sekolah) || "Sekolah Tidak Diketahui"}
                </div>
                <div className="flex items-center gap-2 font-semibold">
                  <User className="w-4 h-4 text-gray-400" />

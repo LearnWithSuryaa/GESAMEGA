@@ -1,6 +1,7 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
-import { Clock, User, Calendar, ImageIcon, ArrowLeft, Tag } from "lucide-react";
+import { Clock, Calendar, ImageIcon, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ShareButtons from "./ShareButtons";
@@ -89,13 +90,16 @@ export default async function ArtikelDetail({ params }: Props) {
       {/* ── Hero ── */}
       <div className="relative w-full h-[55vh] min-h-95 max-h-150 overflow-hidden">
         {/* Image */}
-        <img
+        <Image
           src={
             article.thumbnail_url ||
             "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80"
           }
           alt={article.judul}
-          className="w-full h-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         {/* Multi-layer overlay */}
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-surface/60 to-surface" />
@@ -293,9 +297,11 @@ export default async function ArtikelDetail({ params }: Props) {
                       {/* Thumbnail */}
                       <div className="w-17 h-12.5 rounded-lg overflow-hidden shrink-0 border border-slate-200">
                         {blog.thumbnail_url ? (
-                          <img
+                          <Image
                             src={blog.thumbnail_url}
                             alt={blog.judul}
+                            width={68}
+                            height={50}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                         ) : (
@@ -346,10 +352,12 @@ export default async function ArtikelDetail({ params }: Props) {
                   <div className="rounded-2xl overflow-hidden transition-all duration-300 group-hover:-translate-y-1 bg-white border border-slate-200 shadow-sm hover:shadow-md">
                     <div className="aspect-video relative overflow-hidden">
                       {blog.thumbnail_url ? (
-                        <img
+                        <Image
                           src={blog.thumbnail_url}
                           alt={blog.judul}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-slate-100">

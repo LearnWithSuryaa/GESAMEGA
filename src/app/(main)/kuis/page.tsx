@@ -2,7 +2,6 @@
 
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, notFound } from "next/navigation";
-import { Button } from "@/components/ui/Button";
 import { SchoolAutocomplete } from "@/components/SchoolAutocomplete";
 import {
   Lightbulb,
@@ -17,6 +16,7 @@ import {
   ChevronRight,
   Sparkles,
   BookOpen,
+  LucideIcon,
 } from "lucide-react";
 import { motion, AnimatePresence, cubicBezier } from "framer-motion";
 import { TourGuide } from "@/components/TourGuide";
@@ -25,6 +25,7 @@ import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha,
 } from "react-google-recaptcha-v3";
+import { Question } from "@/lib/repositories/quizRepository";
 
 // ── Tour steps ────────────────────────────────────────────────────────────────
 const KUIS_TOUR_STEPS: DriveStep[] = [
@@ -105,7 +106,16 @@ const KUIS_TOUR_STEPS: DriveStep[] = [
 ];
 
 // ── Color config per result ───────────────────────────────────────────────────
-const COLOR_CONFIG: Record<string, any> = {
+const COLOR_CONFIG: Record<
+  string,
+  {
+    icon: LucideIcon;
+    gradient: string;
+    softBg: string;
+    iconColor: string;
+    badge: string;
+  }
+> = {
   emerald: {
     icon: ShieldCheck,
     gradient: "from-emerald-500 to-teal-500",
@@ -229,7 +239,7 @@ function PageHeader() {
 }
 
 /** Step indicator pills */
-function StepIndicator({ step, total }: { step: number; total: number }) {
+function StepIndicator({ step }: { step: number; total?: number }) {
   const steps = [
     { label: "Identitas", icon: User },
     { label: "Refleksi", icon: BookOpen },
@@ -342,6 +352,22 @@ function InputField({
   );
 }
 
+interface QuizResultData {
+  totalScore: number;
+  category: string;
+  result_category?: string;
+  indicator_color: string;
+  description: string;
+  motivation_message: string;
+  qualification?: string;
+}
+
+interface QuizAnswerItem {
+  question_id: number;
+  option_id: number;
+  score: number;
+}
+
 // ── Main form component ───────────────────────────────────────────────────────
 function KuisForm() {
   const searchParams = useSearchParams();
@@ -350,13 +376,13 @@ function KuisForm() {
 
   const { executeRecaptcha } = useGoogleReCaptcha();
 
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<any[]>([]);
-  const [result, setResult] = useState<any>(null);
+  const [answers, setAnswers] = useState<QuizAnswerItem[]>([]);
+  const [result, setResult] = useState<QuizResultData | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
@@ -385,7 +411,7 @@ function KuisForm() {
         } else {
           setLoadError("Pertanyaan kuis tidak ditemukan. Hubungi admin.");
         }
-      } catch (err: any) {
+      } catch {
         setLoadError("Gagal memuat pertanyaan. Periksa koneksi internet Anda.");
       } finally {
         setLoadingQuestions(false);
@@ -425,7 +451,7 @@ function KuisForm() {
     }, 380);
   };
 
-  const finishQuiz = async (finalAnswers: any[]) => {
+  const finishQuiz = async (finalAnswers: QuizAnswerItem[]) => {
     setAnswers(finalAnswers);
     setLoading(true);
     setSubmitError(null);
@@ -477,9 +503,6 @@ function KuisForm() {
 
   const progress =
     questions.length > 0 ? (currentQuestion / questions.length) * 100 : 0;
-
-  // Determine current step for step indicator
-  const stepIdx = result ? 2 : isStarted ? 1 : 0;
 
   return (
     <div className="min-h-screen bg-surface flex flex-col items-center pt-24 pb-20 px-4 relative overflow-hidden">
@@ -926,7 +949,7 @@ function KuisForm() {
                   {/* Answer options */}
                   <div className="space-y-2.5">
                     {questions[currentQuestion].question_options.map(
-                      (opt: any, idx: number) => {
+                      (opt, idx: number) => {
                         const isSelected = selectedIdx === idx;
                         const isDimmed = selectedIdx !== null && !isSelected;
                         return (

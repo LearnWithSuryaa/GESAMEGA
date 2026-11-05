@@ -111,7 +111,7 @@ export default function TentangKamiPage() {
             Gerakan Digital{" "}
             <span
               style={{
-                background: "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)",
+                background: "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -136,15 +136,15 @@ export default function TentangKamiPage() {
             {...fadeUp(0.3)}
             className="flex flex-wrap gap-4 justify-center mt-10"
           >
-            <Link href="/artikel">
-              <button className="btn-pill-primary text-sm">
-                Baca Wawasan <ArrowRight className="w-4 h-4 ml-2 inline" />
-              </button>
+            <Link href="/artikel" className="btn-pill-primary text-sm inline-flex items-center">
+              Baca Wawasan <ArrowRight className="w-4 h-4 ml-2 inline" />
             </Link>
-            <Link href="/visi-misi">
-              <button className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-900 font-semibold text-sm transition-all duration-300" style={{ color: "var(--color-text-dark)", borderColor: "var(--color-border)" }}>
-                Visi &amp; Misi
-              </button>
+            <Link
+              href="/visi-misi"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-900 font-semibold text-sm transition-all duration-300"
+              style={{ color: "var(--color-text-dark)", borderColor: "var(--color-border)" }}
+            >
+              Visi &amp; Misi
             </Link>
           </motion.div>
         </div>
@@ -204,7 +204,7 @@ export default function TentangKamiPage() {
               <span
                 style={{
                   background:
-                    "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)",
+                    "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -272,7 +272,7 @@ export default function TentangKamiPage() {
               <span
                 style={{
                   background:
-                    "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)",
+                    "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -356,7 +356,7 @@ export default function TentangKamiPage() {
             <br />
             <span
               style={{
-                background: "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)",
+                background: "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -371,10 +371,8 @@ export default function TentangKamiPage() {
             digital yang lebih sehat di sekolah Anda.
           </p>
 
-          <Link href="/artikel" className="relative z-10">
-            <button className="btn-pill-primary text-sm">
-              Mulai Membaca <ArrowRight className="w-4 h-4 ml-2 inline" />
-            </button>
+          <Link href="/artikel" className="relative z-10 btn-pill-primary text-sm inline-flex items-center">
+            Mulai Membaca <ArrowRight className="w-4 h-4 ml-2 inline" />
           </Link>
         </motion.div>
       </section>

@@ -45,7 +45,7 @@ export default function TimPengembangPage() {
           style={{ color: "var(--color-text-dark)" }}
         >
           Tim khusus yang{" "}
-          <span style={{ background: "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+          <span style={{ background: "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
             berdedikasi
           </span>
           <br className="hidden md:block" /> untuk sekolah Anda
@@ -96,7 +96,7 @@ export default function TimPengembangPage() {
 
       {/* ── CONTACT SECTION ── */}
       <section className="py-24 px-4 relative">
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-10 lg:gap-16">
 
           {/* Form Card */}

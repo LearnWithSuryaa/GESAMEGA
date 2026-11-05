@@ -58,7 +58,7 @@ export default function VisiMisiPage() {
             Membangun{" "}
             <span
               style={{
-                background: "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)",
+                background: "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -101,7 +101,7 @@ export default function VisiMisiPage() {
               <span
                 style={{
                   background:
-                    "linear-gradient(135deg, #64B5F6 0%, #2E7D32 100%)",
+                    "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -140,7 +140,7 @@ export default function VisiMisiPage() {
 
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/30 via-orange-500/30 to-transparent -translate-x-1/2" />
+            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/30 via-info/30 to-transparent -translate-x-1/2" />
 
             <div className="space-y-16 md:space-y-20">
               {missions.map((m, i) => {
@@ -229,11 +229,9 @@ export default function VisiMisiPage() {
             pendidikan yang lebih baik.
           </p>
 
-          <Link href="/peta">
-            <button className="btn-pill-primary px-10 py-4">
-              Lihat Peta Partisipasi{" "}
-              <ArrowRight className="ml-2 inline w-5 h-5" />
-            </button>
+          <Link href="/peta" className="btn-pill-primary px-10 py-4 inline-flex items-center">
+            Lihat Peta Partisipasi{" "}
+            <ArrowRight className="ml-2 inline w-5 h-5" />
           </Link>
         </motion.div>
       </section>

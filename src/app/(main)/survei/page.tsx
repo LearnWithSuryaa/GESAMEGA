@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/Button";
 import { SchoolAutocomplete } from "@/components/SchoolAutocomplete";
 import { submitSurvey } from "@/app/actions/survey";
+import type { Question } from "@/lib/repositories/quizRepository";
 import {
   Activity,
   CheckCircle2,
@@ -293,7 +293,7 @@ function SurveiForm() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
@@ -302,7 +302,6 @@ function SurveiForm() {
   const totalSteps = 3;
 
   const [form, setForm] = useState({ nama: "", namaSekolah: "", wilayah: "" });
-  const [schoolId, setSchoolId] = useState<string | null>(null);
   const [jawaban, setJawaban] = useState<Record<number, string>>({});
 
   useEffect(() => {
@@ -317,10 +316,10 @@ function SurveiForm() {
         const res = await fetch("/api/questions");
         const json = await res.json();
         if (json.success) {
-          const surveyQs = json.data.filter(
-            (q: any) => q.category === "Survei GESAMEGA",
+          const surveyQs = (json.data as Question[]).filter(
+            (q) => q.category === "Survei GESAMEGA",
           );
-          setQuestions(surveyQs.length > 0 ? surveyQs : json.data);
+          setQuestions(surveyQs.length > 0 ? surveyQs : (json.data as Question[]));
         }
       } catch (e) {
         console.error("Failed to load survey questions", e);
@@ -413,9 +412,10 @@ function SurveiForm() {
     let captchaToken = "";
     try {
       captchaToken = await executeRecaptcha("survei_submit");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
       setErrors({
-        submit: `Gagal verifikasi keamanan: ${err?.message || "Unknown error"}.`,
+        submit: `Gagal verifikasi keamanan: ${msg}.`,
       });
       setLoading(false);
       return;
@@ -715,7 +715,7 @@ function SurveiForm() {
                 {/* Micro segmented bar — answers progress */}
                 {questions.length > 0 && (
                   <div className="flex gap-1 mt-3">
-                    {questions.map((q, i) => (
+                    {questions.map((q) => (
                       <div
                         key={q.id}
                         className="h-1 flex-1 rounded-full transition-all duration-300"
@@ -788,7 +788,7 @@ function SurveiForm() {
                         </div>
 
                         <div className="space-y-2.5">
-                          {q.question_options.map((opt: any) => (
+                          {q.question_options.map((opt) => (
                             <AnswerOption
                               key={opt.id}
                               label={opt.option_text}

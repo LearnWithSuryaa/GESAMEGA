@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   MessageSquare,
   FileText,
+  LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -28,8 +29,21 @@ interface CaseStudy {
   category: "regulasi" | "pembelajaran" | "literasi" | "inovasi";
   impact: string;
   badge: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
+}
+
+interface DbCaseStudyRow {
+  id: string | number;
+  judul: string;
+  isi: string;
+  penulis: string;
+  category: "regulasi" | "pembelajaran" | "literasi" | "inovasi";
+  impact: string | null;
+  badge: string | null;
+  created_at: string;
+  school_id: string | null;
+  schools: { nama_sekolah: string } | null;
 }
 
 const CATEGORIES = [
@@ -44,11 +58,9 @@ export default function StudiKasusPage() {
   const [cases, setCases] = useState<CaseStudy[]>([]);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCases() {
-      setLoading(true);
       const { data, error } = await supabase
         .from("case_studies")
         .select(
@@ -58,8 +70,8 @@ export default function StudiKasusPage() {
 
       if (!error && data && data.length > 0) {
         setCases(
-          data.map((d: any) => {
-            let icon = Sparkles;
+          (data as unknown as DbCaseStudyRow[]).map((d) => {
+            let icon: LucideIcon = Sparkles;
             let color = "bg-gray-50 text-gray-600 border-gray-200";
 
             switch (d.category) {
@@ -86,8 +98,7 @@ export default function StudiKasusPage() {
               judul: d.judul,
               isi: d.isi,
               penulis: d.penulis,
-              sekolah:
-                (d.schools as any)?.nama_sekolah || "Sekolah Tidak Diketahui",
+              sekolah: d.schools?.nama_sekolah || "Sekolah Tidak Diketahui",
               category: d.category || "inovasi",
               impact: d.impact || "Terverifikasi",
               badge: d.badge || "Praktik Baik",
@@ -97,7 +108,6 @@ export default function StudiKasusPage() {
           }),
         );
       }
-      setLoading(false);
     }
     fetchCases();
   }, []);
@@ -141,7 +151,7 @@ export default function StudiKasusPage() {
             Studi Kasus &{" "}
             <span
               style={{
-                background: "linear-gradient(120deg, #64B5F6 0%, #2E7D32 100%)",
+                background: "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -244,10 +254,11 @@ export default function StudiKasusPage() {
                     </div>
                   </div>
                   <div className="w-full md:w-auto">
-                    <Link href={`/studi-kasus/${filtered[0].id}`}>
-                      <button className="w-full md:w-auto bg-white hover:bg-surface-alt text-gray-900 font-black px-8 py-5 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95">
-                        Baca Selengkapnya <ArrowRight className="w-5 h-5" />
-                      </button>
+                    <Link
+                      href={`/studi-kasus/${filtered[0].id}`}
+                      className="w-full md:w-auto bg-white hover:bg-surface-alt text-gray-900 font-black px-8 py-5 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
+                    >
+                      Baca Selengkapnya <ArrowRight className="w-5 h-5" />
                     </Link>
                   </div>
                 </div>
@@ -374,10 +385,11 @@ export default function StudiKasusPage() {
                   Jadilah sekolah pertama yang membagikan praktik baik, inovasi,
                   atau regulasi yang telah Anda terapkan!
                 </p>
-                <Link href="/hasil">
-                  <button className="bg-primary text-white font-bold px-8 py-4 rounded-2xl hover:bg-primary transition-all flex items-center justify-center gap-2 mx-auto shadow-lg shadow-primary/20">
-                    <FileText className="w-5 h-5" /> Bagikan Studi Kasus Anda
-                  </button>
+                <Link
+                  href="/hasil"
+                  className="bg-primary text-white font-bold px-8 py-4 rounded-2xl hover:bg-primary transition-all flex items-center justify-center gap-2 mx-auto shadow-lg shadow-primary/20"
+                >
+                  <FileText className="w-5 h-5" /> Bagikan Studi Kasus Anda
                 </Link>
               </>
             ) : (
@@ -410,10 +422,11 @@ export default function StudiKasusPage() {
                 sekolah Anda dalam membangun ekosistem digital yang sehat.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                <Link href="/panduan" className="flex-1 sm:flex-initial">
-                  <button className="w-full bg-white text-primary font-black px-8 py-5 rounded-2xl shadow-xl hover:bg-surface-alt transition-all active:scale-95">
-                    Pelajari Panduan Kebijakan
-                  </button>
+                <Link
+                  href="/panduan"
+                  className="flex-1 sm:flex-initial w-full bg-white text-primary font-black px-8 py-5 rounded-2xl shadow-xl hover:bg-surface-alt transition-all active:scale-95 text-center"
+                >
+                  Pelajari Panduan Kebijakan
                 </Link>
                 <button className="flex-1 sm:flex-initial bg-primary text-white border border-white/20 font-black px-8 py-5 rounded-2xl hover:bg-primary transition-all active:scale-95">
                   Hubungi Tim Riset

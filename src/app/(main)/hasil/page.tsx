@@ -25,15 +25,12 @@ import {
   Zap,
   Target,
   ChevronRight,
-  BookOpen,
   Award,
-  Send,
   Eye,
   EyeOff,
   AlertOctagon,
   ClipboardList,
   Megaphone,
-  Newspaper,
   Info,
   Trophy,
   Cpu,
@@ -1420,7 +1417,7 @@ function Dashboard({
                             val: quizzes.length,
                             icon: Brain,
                           },
-                        ].map(({ label, val, icon: Icon }) => (
+                        ].map(({ label, val }) => (
                           <div
                             key={label}
                             className="flex-1 p-3 rounded-xl"
@@ -2512,13 +2509,22 @@ export default function HasilPage() {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     try {
       const raw = sessionStorage.getItem(SESSION_KEY);
-      if (raw) setSchool(JSON.parse(raw) as SchoolData);
+      if (raw) {
+        const parsed = JSON.parse(raw) as SchoolData;
+        timer = setTimeout(() => {
+          setSchool(parsed);
+          setChecked(true);
+        }, 0);
+        return () => clearTimeout(timer);
+      }
     } catch {
       /* ignore */
     }
-    setChecked(true);
+    timer = setTimeout(() => setChecked(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!checked) return null;

@@ -71,8 +71,9 @@ function KomitmenForm() {
     let captchaToken = "";
     try {
       captchaToken = await executeRecaptcha("komitmen_submit");
-    } catch (err: any) {
-      setErrors({ submit: `Gagal verifikasi: ${err?.message}` });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setErrors({ submit: `Gagal verifikasi: ${msg}` });
       setLoading(false);
       return;
     }
@@ -273,7 +274,7 @@ function KomitmenForm() {
                           >
                             Sekolah{" "}
                             <strong className="text-text-dark">
-                              "{form.sekolah}"
+                              &ldquo;{form.sekolah}&rdquo;
                             </strong>{" "}
                             belum menyelesaikan Survei Diagnostik.
                           </p>
