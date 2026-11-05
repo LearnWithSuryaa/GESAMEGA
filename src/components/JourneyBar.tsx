@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Check, ArrowRight } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -36,15 +36,14 @@ export function JourneyBar() {
           className="absolute top-6 left-0 h-[2px] mx-12 transition-all duration-[1.5s] ease-[0.22,1,0.36,1]"
           style={{
             width: `calc(${progressPct} - ${currentStep === 1 ? '0px' : '48px'})`,
-            background: "linear-gradient(90deg, #f97316, #fb923c, #ea580c)",
-            boxShadow: "0 0 20px rgba(249,115,22,0.4), 0 0 40px rgba(249,115,22,0.1)",
+            background: "linear-gradient(90deg, #2E7D32, #10b981, #1E88E5)",
+            boxShadow: "0 0 20px rgba(46,125,50,0.4), 0 0 40px rgba(46,125,50,0.1)",
           }}
         />
 
         {steps.map((step) => {
           const isActive  = currentStep === step.id;
           const isPassed  = currentStep > step.id;
-          const isFuture  = currentStep < step.id;
 
           return (
             <div key={step.id} className="relative z-10 flex flex-col items-center gap-4 w-1/3 group">
@@ -54,7 +53,7 @@ export function JourneyBar() {
                 {isActive && (
                   <motion.div 
                     layoutId="journey-glow"
-                    className="absolute -inset-4 bg-orange-500/20 rounded-full blur-xl"
+                    className="absolute -inset-4 bg-primary/20 rounded-full blur-xl"
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                   />
@@ -65,15 +64,15 @@ export function JourneyBar() {
                   className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-700 border-2 relative overflow-hidden",
                     isPassed
-                      ? "bg-orange-500 border-orange-400 text-white shadow-[0_10px_25px_rgba(234,88,12,0.4)] rotate-0"
+                      ? "bg-primary border-primary-light text-white shadow-[0_10px_25px_rgba(46,125,50,0.4)] rotate-0"
                       : isActive
-                      ? "bg-[#0a0a0a] border-orange-500 text-orange-400 shadow-[0_0_30px_rgba(249,115,22,0.3)] scale-110"
+                      ? "bg-[#0a0a0a] border-primary text-primary-light shadow-[0_0_30px_rgba(46,125,50,0.3)] scale-110"
                       : "bg-white/2 border-white/5 text-white/20 backdrop-blur-xl hover:border-white/10"
                   )}
                 >
                   {/* Decorative background for active */}
                   {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
                   )}
 
                   {isPassed ? (
@@ -97,7 +96,7 @@ export function JourneyBar() {
                   className={cn(
                     "text-[10px] font-black uppercase tracking-[0.3em] transition-all duration-500",
                     isActive  ? "text-white translate-y-0"
-                    : isPassed ? "text-orange-500/60"
+                    : isPassed ? "text-primary/60"
                     : "text-white/10 group-hover:text-white/20"
                   )}
                 >
@@ -112,7 +111,7 @@ export function JourneyBar() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="text-[9px] text-orange-500 font-black uppercase tracking-[0.2em] mt-1 block"
+                        className="text-[9px] text-primary-light font-black uppercase tracking-[0.2em] mt-1 block"
                       >
                         Sedang Berjalan
                       </motion.span>

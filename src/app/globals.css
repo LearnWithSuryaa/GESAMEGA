@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
+@import "driver.js/dist/driver.css";
 
 /* ============================================================
    LIGHT FLAT VECTOR DESIGN SYSTEM
@@ -50,8 +50,8 @@
   }
 
   ::selection {
-    background: rgba(46, 125, 50, 0.2); /* Orange-500 with opacity */
-    color: #C2410C; /* Orange-700 */
+    background: rgba(46, 125, 50, 0.18);
+    color: #2E7D32;
   }
 
   /* Custom scrollbar */
@@ -110,11 +110,11 @@
   .btn-pill-primary {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #64B5F6, #fb7185); /* Soft Orange to Soft Rose */
+    background: linear-gradient(135deg, #2E7D32, #1E88E5);
     color: white;
     font-weight: 600;
-    border-radius: 9999px; /* Pill shape */
-    box-shadow: 0 4px 14px rgba(30, 136, 229, 0.25);
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(46, 125, 50, 0.25);
     transition: all 0.3s ease;
     padding: 0.75rem 1.5rem;
     display: inline-flex;
@@ -125,7 +125,7 @@
 
   .btn-pill-primary:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(30, 136, 229, 0.35);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.35);
   }
   
   .btn-pill-primary:active {
@@ -136,8 +136,8 @@
     position: relative;
     overflow: hidden;
     background: white;
-    border: 1.5px solid #A5D6A7; /* Orange-200 */
-    color: #1E88E5; /* Orange-600 */
+    border: 1.5px solid var(--color-primary-soft);
+    color: var(--color-primary);
     font-weight: 600;
     border-radius: 9999px;
     transition: all 0.3s ease;
@@ -148,11 +148,11 @@
   }
 
   .btn-pill-outline:hover {
-    background: #F1F8E9; /* Orange-50 */
-    border-color: #64B5F6; /* Orange-400 */
-    color: #c2410c; /* Orange-700 */
+    background: var(--color-surface-alt);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(30, 136, 229, 0.1);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.12);
   }
 
   /* ---- Form Elements ---- */
@@ -179,8 +179,8 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    background: #FFF7ED; /* Orange-50 */
-    color: #EA580C; /* Orange-600 */
+    background: #F1F8E9;
+    color: #2E7D32;
   }
 
   /* ---- Modern Big Action Tile Radio ---- */
@@ -327,4 +327,91 @@
 
 .gesamega-tour-theme .driver-popover-arrow-side-top {
   border-top-color: rgba(13, 13, 13, 0.9) !important;
+}
+
+/* ============================================================
+   LEAFLET CUSTOM GESAMEGA THEME
+   ============================================================ */
+
+/* Clean modern civic map styling (eliminates harsh saturated colors, clean Positron aesthetic, 100% free with no watermark) */
+.peta-styled-map .leaflet-tile-pane,
+.peta-leaflet-wrap .leaflet-tile-pane {
+  filter: grayscale(0.92) contrast(1.02) brightness(1.06);
+  transition: filter 0.3s ease;
+}
+
+/* Ensure clean base container */
+.leaflet-container {
+  background: #F8FAFC !important;
+}
+
+/* Clean up zoom controls */
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: #ffffff !important;
+  color: #37474F !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: #F1F8E9 !important;
+  color: #2E7D32 !important;
+}
+
+/* Modern popup styling */
+.custom-peta-popup .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  padding: 8px !important;
+}
+
+.custom-peta-popup .leaflet-popup-tip {
+  background: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+.custom-peta-popup .leaflet-popup-content {
+  margin: 6px 8px !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  top: 8px !important;
+  right: 8px !important;
+  color: #94A3B8 !important;
+  padding: 4px !important;
+  font-size: 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #37474F !important;
+  background-color: #F1F5F9 !important;
+}
+
+/* Subtle attribution */
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+  font-size: 10px !important;
+  color: #94A3B8 !important;
+  border-radius: 6px 0 0 0 !important;
+  padding: 2px 6px !important;
 }

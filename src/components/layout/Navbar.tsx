@@ -135,8 +135,8 @@ export function Navbar() {
                     className={cn(
                       "px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 transition-all duration-200",
                       active
-                        ? "text-info bg-button-nav/20 border border-button-nav/30"
-                        : "text-text-dark/70 hover:text-text-dark hover:bg-button-nav/10",
+                        ? "text-primary bg-primary/10 border border-primary/20"
+                        : "text-text-dark/70 hover:text-text-dark hover:bg-primary/5",
                     )}
                   >
                     {Icon && <Icon className="w-4 h-4" />}
@@ -197,10 +197,10 @@ export function Navbar() {
             <div className="hidden lg:flex items-center">
               <Link href="/peta">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-button-nav text-text-dark font-extrabold text-sm shadow-lg shadow-button-nav/60 hover:shadow-xl hover:shadow-button-nav/80 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-primary to-info hover:from-primary hover:to-info/90 text-white font-bold text-sm shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
                 >
                   Peta Partisipasi
                 </motion.button>
@@ -278,8 +278,8 @@ export function Navbar() {
                       className={cn(
                         "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150",
                         active
-                          ? "text-info bg-button-nav/20 border border-button-nav/30"
-                          : "text-text-dark/70 hover:text-text-dark hover:bg-button-nav/10",
+                          ? "text-primary bg-primary/10 border border-primary/20"
+                          : "text-text-dark/70 hover:text-text-dark hover:bg-primary/5",
                       )}
                     >
                       {Icon && <Icon className="w-4 h-4 shrink-0" />}
@@ -334,10 +334,12 @@ export function Navbar() {
 
               {/* Drawer Footer */}
               <div className="px-5 py-5 border-t border-primary-light/15">
-                <Link href="/peta" onClick={closeMobile}>
-                  <button className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-button-nav hover:bg-button-nav/90 text-text-dark font-bold text-sm transition-all duration-300 shadow-lg shadow-button-nav/25">
-                    Lihat Peta
-                  </button>
+                <Link
+                  href="/peta"
+                  onClick={closeMobile}
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-primary to-info text-white font-bold text-sm transition-all duration-300 shadow-md shadow-primary/20"
+                >
+                  Lihat Peta
                 </Link>
               </div>
             </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Download } from "lucide-react";
 import { generatePiagamPDF } from "@/lib/pdfGenerator";
 
@@ -19,13 +20,12 @@ export function PiagamPreview({ sekolah }: { sekolah: string }) {
         className="relative w-full aspect-[1.414] rounded-2xl overflow-hidden"
         style={{ border: "1px solid rgba(0,0,0,0.08)" }}
       >
-        <img
+        <Image
           src="/assets/Piagam-GESAMEGA.jpg"
           alt="Template Piagam"
-          className="absolute inset-0 w-full h-full object-cover opacity-90"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = "/assets/Piagam-GESAMEGA.pdf";
-          }}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover opacity-90"
         />
         <div className="absolute inset-0 z-10 pointer-events-none">
           {(() => {
@@ -69,7 +69,7 @@ export function PiagamPreview({ sekolah }: { sekolah: string }) {
           setDownloadingPiagam(true);
           try {
             await generatePiagamPDF(sekolah);
-          } catch (err: any) {
+          } catch (err: unknown) {
             console.error("Error generating Piagam:", err);
             alert("Gagal mengunduh Piagam. Silakan periksa koneksi atau hubungi admin.");
           } finally {

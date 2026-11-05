@@ -173,7 +173,6 @@ export function SchoolAutocomplete({
               {/* Items */}
               {filtered.map((school) => {
                 const cfg = statusConfig[school.status] || statusConfig["belum"];
-                const Icon = cfg.icon;
                 return (
                   <li
                     key={school.id}

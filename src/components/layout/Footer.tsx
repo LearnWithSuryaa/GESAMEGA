@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, MapPin, Activity } from "lucide-react";
 
@@ -109,9 +110,12 @@ export function Footer() {
                 border: "1px solid rgba(0,0,0,0.07)",
               }}
             >
-              <img
+              <Image
                 src="/assets/Logo-Gesa-media.svg"
                 alt="Gesa Media Logo"
+                width={80}
+                height={20}
+                unoptimized
                 className="h-5 w-auto object-contain"
                 style={{ filter: "brightness(0)", opacity: 0.6 }}
               />
@@ -119,9 +123,11 @@ export function Footer() {
                 className="w-px h-4 self-center"
                 style={{ background: "rgba(0,0,0,0.12)" }}
               />
-              <img
+              <Image
                 src="/assets/logo-kmpus.png"
                 alt="Logo Kampus"
+                width={80}
+                height={24}
                 className="h-6 w-auto object-contain"
                 style={{ filter: "brightness(0)", opacity: 0.55 }}
               />
@@ -242,29 +248,28 @@ export function Footer() {
                 </p>
               </div>
 
-              <Link href="/artikel" className="relative z-10 block">
-                <button
-                  className="group w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-bold text-xs text-white transition-all duration-200"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
-                    boxShadow: "0 0 20px rgba(46, 125, 50,0.25)",
-                    color: "white",
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLButtonElement;
-                    el.style.boxShadow = "0 0 32px rgba(46, 125, 50,0.45)";
-                    el.style.transform = "scale(1.02)";
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLButtonElement;
-                    el.style.boxShadow = "0 0 20px rgba(46, 125, 50,0.25)";
-                    el.style.transform = "scale(1)";
-                  }}
-                >
-                  Baca Artikel
-                  <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-150" />
-                </button>
+              <Link
+                href="/artikel"
+                className="group relative z-10 w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-bold text-xs text-white transition-all duration-200"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #2E7D32 0%, #1E88E5 100%)",
+                  boxShadow: "0 0 20px rgba(46, 125, 50,0.25)",
+                  color: "white",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLAnchorElement;
+                  el.style.boxShadow = "0 0 32px rgba(46, 125, 50,0.45)";
+                  el.style.transform = "scale(1.02)";
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLAnchorElement;
+                  el.style.boxShadow = "0 0 20px rgba(46, 125, 50,0.25)";
+                  el.style.transform = "scale(1)";
+                }}
+              >
+                Baca Artikel
+                <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-150" />
               </Link>
             </div>
           </div>
