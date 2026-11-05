@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef, useCallback } from "react";
 import { driver, DriveStep } from "driver.js";
 import { HelpCircle } from "lucide-react";
 
@@ -12,24 +12,42 @@ interface TourGuideProps {
 export function TourGuide({ steps, pageName }: TourGuideProps) {
   const driverRef = useRef<ReturnType<typeof driver> | null>(null);
 
-  useEffect(() => {
-    // Prevent SSR errors, load driver only on client
-    driverRef.current = driver({
+  const startTour = useCallback(() => {
+    // Filter secara defensif: hanya jalankan step yang elemennya benar-benar ada di DOM saat tombol diklik
+    const activeSteps = steps.filter((step) => {
+      if (!step.element) return true; // Floating step tanpa anchor elemen tetap diizinkan
+      if (typeof step.element === "string") {
+        return Boolean(document.querySelector(step.element));
+      }
+      if (step.element instanceof Element) {
+        return document.body.contains(step.element);
+      }
+      return true;
+    });
+
+    if (activeSteps.length === 0) return;
+
+    // Inisialisasi driver dengan steps yang valid dan siap di-highlight
+    const driverObj = driver({
       showProgress: true,
       nextBtnText: "Next",
       prevBtnText: "Prev",
-      doneBtnText: "Tutup",
+      doneBtnText: "Selesai",
       progressText: "Langkah {{current}} dari {{total}}",
       popoverClass: "gesamega-tour-theme", // Custom theme via globals.css
-      steps: steps,
+      steps: activeSteps,
       smoothScroll: true,
     });
+
+    driverRef.current = driverObj;
+    driverObj.drive();
   }, [steps]);
 
   return (
     <button
-      onClick={() => driverRef.current?.drive()}
-      className="fixed bottom-10 right-10 z-[9999] w-14 h-14 bg-black/50 backdrop-blur-xl border border-white/10 text-primary-light rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(46,125,50,0.15)] flex items-center justify-center hover:border-primary/50 hover:shadow-[0_0_50px_rgba(46,125,50,0.4)] hover:-translate-y-2 active:scale-95 transition-all duration-500 group overflow-hidden"
+      type="button"
+      onClick={startTour}
+      className="fixed bottom-10 right-10 z-[9999] w-14 h-14 bg-black/50 backdrop-blur-xl border border-white/10 text-primary-light rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(46,125,50,0.15)] flex items-center justify-center hover:border-primary/50 hover:shadow-[0_0_50px_rgba(46,125,50,0.4)] hover:-translate-y-2 active:scale-95 transition-all duration-500 group overflow-hidden cursor-pointer"
       aria-label={`Tampilkan Panduan ${pageName}`}
     >
       {/* Dynamic background glow */}

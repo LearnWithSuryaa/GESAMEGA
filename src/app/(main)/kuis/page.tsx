@@ -27,84 +27,6 @@ import {
 } from "react-google-recaptcha-v3";
 import { Question } from "@/lib/repositories/quizRepository";
 
-// ── Tour steps ────────────────────────────────────────────────────────────────
-const KUIS_TOUR_STEPS: DriveStep[] = [
-  {
-    element: "#registration-card",
-    popover: {
-      title: "Selamat Datang!",
-      description:
-        "Isi data diri Anda sebelum memulai kuis refleksi digital ini.",
-      side: "bottom",
-      align: "start",
-    },
-  },
-  {
-    element: "#input-name",
-    popover: {
-      title: "Nama Pengisi",
-      description:
-        "Masukkan nama lengkap Anda agar hasil refleksi lebih personal.",
-      side: "bottom",
-      align: "start",
-    },
-  },
-  {
-    element: "#input-school",
-    popover: {
-      title: "Asal Sekolah",
-      description: "Isi nama sekolah Anda untuk pendataan ekosistem digital.",
-      side: "bottom",
-      align: "start",
-    },
-  },
-  {
-    element: "#btn-start-quiz",
-    popover: {
-      title: "Mulai Kuis",
-      description: "Tombol ini aktif setelah Anda mengisi nama dan sekolah.",
-      side: "top",
-      align: "center",
-    },
-  },
-  {
-    element: "#quiz-progress",
-    popover: {
-      title: "Progres Kuis",
-      description: "Lihat sudah sejauh mana Anda menjawab pertanyaan refleksi.",
-      side: "bottom",
-      align: "start",
-    },
-  },
-  {
-    element: "#quiz-question-card",
-    popover: {
-      title: "Pertanyaan Refleksi",
-      description: "Pilih jawaban yang paling jujur untuk hasil yang akurat.",
-      side: "top",
-      align: "center",
-    },
-  },
-  {
-    element: "#quiz-result-card",
-    popover: {
-      title: "Hasil Refleksi",
-      description: "Ini adalah hasil analisis profil digital Anda berdasarkan jawaban yang telah diberikan.",
-      side: "top",
-      align: "center",
-    },
-  },
-  {
-    element: "#quiz-action-steps",
-    popover: {
-      title: "Langkah Aksi",
-      description: "Ikuti rekomendasi tindakan ini untuk membangun kebiasaan digital yang lebih sehat.",
-      side: "top",
-      align: "center",
-    },
-  },
-];
-
 // ── Color config per result ───────────────────────────────────────────────────
 const COLOR_CONFIG: Record<
   string,
@@ -1017,7 +939,102 @@ function KuisForm() {
         </AnimatePresence>
       </div>
 
-      <TourGuide steps={KUIS_TOUR_STEPS} pageName="Kuis Refleksi" />
+      {/* Contextual tour steps based on current active screen */}
+      {(() => {
+        let currentSteps: DriveStep[] = [];
+        if (result) {
+          currentSteps = [
+            {
+              element: "#quiz-result-card",
+              popover: {
+                title: "Hasil Profil Refleksi",
+                description:
+                  "Analisis kecenderungan gaya hidup digital Anda berdasarkan jawaban yang telah dianalisis.",
+                side: "top",
+                align: "center",
+              },
+            },
+            {
+              element: "#quiz-action-steps",
+              popover: {
+                title: "Rekomendasi Langkah Aksi",
+                description:
+                  "Tips dan tindakan praktis yang dirancang khusus untuk membangun kebiasaan digital yang lebih sehat.",
+                side: "top",
+                align: "center",
+              },
+            },
+          ];
+        } else if (isStarted) {
+          currentSteps = [
+            {
+              element: "#quiz-progress",
+              popover: {
+                title: "Indikator Progres Soal",
+                description:
+                  "Menampilkan nomor soal yang sedang aktif dan persentase kelengkapan refleksi Anda.",
+                side: "bottom",
+                align: "start",
+              },
+            },
+            {
+              element: "#quiz-question-card",
+              popover: {
+                title: "Pertanyaan Refleksi",
+                description:
+                  "Pilihlah salah satu opsi jawaban yang paling menggambarkan kebiasaan digital harian Anda secara jujur.",
+                side: "top",
+                align: "center",
+              },
+            },
+          ];
+        } else {
+          currentSteps = [
+            {
+              element: "#registration-card",
+              popover: {
+                title: "Selamat Datang!",
+                description:
+                  "Lengkapi identitas singkat Anda sebelum memulai kuis refleksi kebiasaan digital.",
+                side: "bottom",
+                align: "start",
+              },
+            },
+            {
+              element: "#input-name",
+              popover: {
+                title: "Nama Pengisi",
+                description:
+                  "Masukkan nama lengkap Anda agar hasil refleksi dan sertifikat lebih personal.",
+                side: "bottom",
+                align: "start",
+              },
+            },
+            {
+              element: "#input-school",
+              popover: {
+                title: "Asal Sekolah",
+                description:
+                  "Pilih sekolah Anda di Sidoarjo untuk pencatatan ekosistem digital.",
+                side: "bottom",
+                align: "start",
+              },
+            },
+            {
+              element: "#btn-start-quiz",
+              popover: {
+                title: "Mulai Kuis",
+                description:
+                  "Tombol ini akan aktif setelah nama dan sekolah dipilih. Klik untuk masuk ke pertanyaan refleksi.",
+                side: "top",
+                align: "center",
+              },
+            },
+          ];
+        }
+
+        return <TourGuide steps={currentSteps} pageName="Kuis Refleksi" />;
+      })()}
     </div>
   );
 }

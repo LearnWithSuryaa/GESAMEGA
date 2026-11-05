@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, cubicBezier } from "framer-motion";
 import { TourGuide } from "@/components/TourGuide";
+import type { DriveStep } from "driver.js";
 import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha,
@@ -913,6 +914,7 @@ function SurveiForm() {
 
           {currentStep < totalSteps ? (
             <motion.button
+              id="tour-survei-next-btn"
               type="button"
               onClick={goToNextStep}
               disabled={loadingQuestions && currentStep === 2}
@@ -928,6 +930,7 @@ function SurveiForm() {
             </motion.button>
           ) : (
             <motion.button
+              id="tour-survei-submit-btn"
               type="button"
               onClick={handleSubmit}
               disabled={loading}
@@ -958,43 +961,94 @@ function SurveiForm() {
         </p>
       </div>
 
-      <TourGuide
-        pageName="Survei"
-        steps={[
-          {
-            element: "#tour-survei-progress",
-            popover: {
-              title: "Lacak Kemajuan",
-              description:
-                "Survei ini hanya 3 langkah. Garis ini menunjukkan seberapa jauh Anda sudah mengisi.",
+      {/* Contextual tour steps based on active wizard step */}
+      {(() => {
+        let currentSteps: DriveStep[] = [];
+        if (currentStep === 1) {
+          currentSteps = [
+            {
+              element: "#tour-survei-progress",
+              popover: {
+                title: "Lacak Kemajuan",
+                description:
+                  "Survei terdiri dari 3 tahapan: Identitas Instansi, Kuesioner Inti, dan Konfirmasi.",
+              },
             },
-          },
-          {
-            element: "#tour-survei-step1",
-            popover: {
-              title: "Informasi Instansi",
-              description:
-                "Isi asal instansi/sekolah Anda agar data dapat dipetakan dengan akurat.",
+            {
+              element: "#tour-survei-step1",
+              popover: {
+                title: "Informasi Instansi",
+                description:
+                  "Isi nama penanggung jawab dan pilih asal sekolah Anda di Sidoarjo agar data terdata akurat.",
+              },
             },
-          },
-          {
-            element: "#tour-survei-step2",
-            popover: {
-              title: "Kuesioner Inti",
-              description:
-                "Jawab seluruh pertanyaan dengan jujur sesuai kondisi ekosistem digital di sekolah Anda.",
+            {
+              element: "#tour-survei-next-btn",
+              popover: {
+                title: "Lanjut ke Kuesioner",
+                description:
+                  "Klik tombol ini setelah data instansi terisi untuk mulai menjawab pertanyaan survei.",
+              },
             },
-          },
-          {
-            element: "#tour-survei-step3",
-            popover: {
-              title: "Konfirmasi & Kirim",
-              description:
-                "Pastikan semua data sudah benar, lalu klik 'Kirim Survei' untuk mengakhiri proses ini.",
+          ];
+        } else if (currentStep === 2) {
+          currentSteps = [
+            {
+              element: "#tour-survei-progress",
+              popover: {
+                title: "Progres Kuesioner",
+                description:
+                  "Pantau progres pengisian dan jumlah pertanyaan yang telah Anda selesaikan.",
+              },
             },
-          },
-        ]}
-      />
+            {
+              element: "#tour-survei-step2",
+              popover: {
+                title: "Pertanyaan Inti",
+                description:
+                  "Pilih jawaban yang paling mewakili kondisi nyata kesiapan ekosistem digital di sekolah Anda.",
+              },
+            },
+            {
+              element: "#tour-survei-next-btn",
+              popover: {
+                title: "Tahap Konfirmasi",
+                description:
+                  "Setelah semua pertanyaan terjawab, klik tombol ini untuk beralih ke tahap review akhir.",
+              },
+            },
+          ];
+        } else {
+          currentSteps = [
+            {
+              element: "#tour-survei-progress",
+              popover: {
+                title: "Tahap Konfirmasi",
+                description:
+                  "Anda berada di tahap terakhir sebelum data survei resmi dikirimkan.",
+              },
+            },
+            {
+              element: "#tour-survei-step3",
+              popover: {
+                title: "Verifikasi & Pernyataan",
+                description:
+                  "Periksa kembali data instansi dan pernyataan komitmen bersama sebelum melakukan pengiriman.",
+              },
+            },
+            {
+              element: "#tour-survei-submit-btn",
+              popover: {
+                title: "Kirim Survei Resmi",
+                description:
+                  "Klik tombol ini untuk menyimpan hasil survei ke pangkalan data ekosistem digital.",
+              },
+            },
+          ];
+        }
+
+        return <TourGuide steps={currentSteps} pageName="Survei" />;
+      })()}
     </div>
   );
 }
